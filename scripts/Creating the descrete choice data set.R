@@ -53,8 +53,8 @@ ResChoiceExp_a <- ResChoiceExp[c(1, 2 , 3, 9, 16, 19:35)]
 
 # Refactor price variable, 1 -> -2, 2 -> -1, 3 -> 0, 4 -> 1, 5 -> 2
 
-ResChoiceExp_a$price1_a <- ifelse(ResChoiceExp_a$price1 == "1", "0.8", ifelse(ResChoiceExp_a$price1 == "2", "0.9", ifelse(ResChoiceExp_a$price1 == "3", "1", ifelse(ResChoiceExp_a$price1 == "4", "1.1", "1.2"))))
-ResChoiceExp_a$price2_a <- ifelse(ResChoiceExp_a$price2 == "1", "0.8", ifelse(ResChoiceExp_a$price2 == "2", "0.9", ifelse(ResChoiceExp_a$price2 == "3", "1", ifelse(ResChoiceExp_a$price2 == "4", "1.1", "1.2"))))
+ResChoiceExp_a$price1_a <- as.numeric(ifelse(ResChoiceExp_a$price1 == "1", "0.8", ifelse(ResChoiceExp_a$price1 == "2", "0.9", ifelse(ResChoiceExp_a$price1 == "3", "1", ifelse(ResChoiceExp_a$price1 == "4", "1.1", "1.2")))))
+ResChoiceExp_a$price2_a <- as.numeric(ifelse(ResChoiceExp_a$price2 == "1", "0.8", ifelse(ResChoiceExp_a$price2 == "2", "0.9", ifelse(ResChoiceExp_a$price2 == "3", "1", ifelse(ResChoiceExp_a$price2 == "4", "1.1", "1.2")))))
 ResChoiceExp_a$price1 <- NULL
 ResChoiceExp_a$price2 <- NULL
   ## Refactoring PersonHouseHold Data ##
@@ -70,7 +70,6 @@ PersonHouseholdData <- readxl::read_excel("C:/Users/Kristopher/odrive/Box/Utah T
 
 renters <- subset(PersonHouseholdData, rent_price != "NA")
 renters$home_price <- NULL
-renters <- dplyr::rename(renters, c("rent_price"="price"))
 colnames(renters)[colnames(renters)=="rent_price"] <- "price"
 
 owners <- subset(PersonHouseholdData, home_price != "NA")
@@ -86,4 +85,27 @@ HouseResChoice <- plyr::join(ResChoiceExp_a, PersonHouseholdData, type= "inner")
 
 # Creating the Nominal Price Vector
 
-HouseResChoice$nominal_price1 <- (HouseResChoice$price1_a * HouseResChoice$pri)
+HouseResChoice$nominal_price1 <- (HouseResChoice$price1_a*HouseResChoice$price - HouseResChoice$price)
+HouseResChoice$nominal_price2 <- (HouseResChoice$price2_a*HouseResChoice$price - HouseResChoice$price)
+
+# Creating an ID
+
+HouseResChoice$id <- as.numeric(as.factor(HouseResChoice$password))
+
+# Reording variable for convenience
+
+HouseResChoice <- HouseResChoice[c(199, 3:20, 197:198, 23:196)]
+
+# Restructuring the dataset to represent discreate choices
+
+HouseResChoice <- plyr::rename(HouseResChoice, c("thecount" = "thecount", "choice_a" = "choice", "commute1_a" = "commute1", "commute2_a" = "commute2", "destinations1_a" = "destinations1", "destinations2_a" = "destinations2", "homes1_a" = "homes1", "homes2_a" = "homes2", "streets1_a" = "streets1", "streets2_a" = "streets2", "transit1_a" = "transit1" , "transit2_a" = "transit2", "parking1_driveway_a" = "ParkingDriveway1", "parking1_on_street_a" = "ParkingOnStreet1", "parking1_off_street_a" = "ParkingOffStreet1", "parking2_driveway_a" = "ParkingDriveway2", "parking2_on_street_a" = "ParkingOnStreet2", "parking2_off_street_a" = "ParkingOffStreet2", "id" = "id", "nominal_price1" = "NominalPrice1", "nominal_price2" = "NominalPrice2"))
+
+LogitData <- mlogit::mlogit.data(HouseResChoice, shape = "wide", choice = "choice", sep = "", varying = c(4:21), alt.levels = c(1,2), id="id")
+
+# Remove Uneeded Datasets
+
+remove(ResChoiceExp, ResChoiceExp_a, PersonHouseholdData)
+
+# Save the LogitData
+
+write.csv(LogitData, file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/LogitData.csv")
