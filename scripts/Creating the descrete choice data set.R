@@ -57,6 +57,7 @@ ResChoiceExp_a$price1_a <- as.numeric(ifelse(ResChoiceExp_a$price1 == "1", "0.8"
 ResChoiceExp_a$price2_a <- as.numeric(ifelse(ResChoiceExp_a$price2 == "1", "0.8", ifelse(ResChoiceExp_a$price2 == "2", "0.9", ifelse(ResChoiceExp_a$price2 == "3", "1", ifelse(ResChoiceExp_a$price2 == "4", "1.1", "1.2")))))
 ResChoiceExp_a$price1 <- NULL
 ResChoiceExp_a$price2 <- NULL
+
   ## Refactoring PersonHouseHold Data ##
 
 # Reading in data
@@ -78,6 +79,10 @@ colnames(owners)[colnames(owners)=="home_price"] <- "price"
 
 PersonHouseholdData <- rbind(owners, renters)
 remove(owners, renters)
+
+# Save as Owner/Renter Demographics
+
+Owner_Renter_demographics <- write.csv(PersonHouseholdData, file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/Owner_Renter_demographics.csv")
 
   ## Merging both PersonHouseHoldData with ResChoiceExp ##
 
@@ -104,7 +109,9 @@ LogitData <- mlogit::mlogit.data(HouseResChoice, shape = "wide", choice = "choic
 
 # Remove Uneeded Datasets
 
-remove(ResChoiceExp, ResChoiceExp_a, PersonHouseholdData)
+# Reorder the variables in LogitData
+
+LogitData <- LogitData[c(1:3, 178:188, 4:177)]
 
 # Save the LogitData
 
