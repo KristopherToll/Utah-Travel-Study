@@ -2,7 +2,6 @@
     ## LOGISTIC REGRESSION USING HouseResChoice_2 DATASET ##
 
 
-install.packages(c("manipulate", "plyr", "read_excel", "readxl", "support.CEs", "mlogit", "readr", "lmtest"))
 
 library(mlogit, readr, lmtest)
 

@@ -1,0 +1,92 @@
+---
+title: "Discrete Choice Models"
+author: "Kristopher C. Toll"
+date: "February 8, 2018"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen=999)
+```
+
+```{r Reading in Data, include=FALSE}
+# Demographics
+Owner_Renter_demographics <- read.csv(file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/Owner_Renter_demographics.csv")
+
+# Data for modeling
+LogitData <- read.csv(file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/LogitData.csv")
+
+```
+
+## Descriptive Stats
+
+
+```{r Descriptive Stats, echo=FALSE}
+a <- nrow(Owner_Renter_demographics)
+
+region_Owner_rent_count <- as.data.frame(table(Owner_Renter_demographics$rent_own, Owner_Renter_demographics$home_regionid))
+
+region_Owner_rent_count$Var1 <- ifelse(region_Owner_rent_count$Var1 == "1", "Renters", "Owners")
+region_Owner_rent_count$Var2 <- ifelse(region_Owner_rent_count$Var2 == "1", "Cache", ifelse(region_Owner_rent_count$Var2 == "2", "WFRC-MAG", ifelse(region_Owner_rent_count$Var2 == "3", "Dixie", "Utah Other")))
+
+income_count <- as.data.frame(table(Owner_Renter_demographics$income))
+
+print(c("Sample Size", a))
+
+print(region_Owner_rent_count)
+
+print(income_count)
+```
+
+## Models
+
+### Full Model
+
+```{r Full Model, echo=FALSE}
+FullModel <- glm(choice ~ NominalPrice + commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet + alt, data=LogitData)
+summary(FullModel)
+ResourceSelection::hoslem.test(FullModel$y, FullModel$fitted.values)
+```
+
+### Renters Model
+
+```{r Renters Model, echo=FALSE}
+Renters <- glm(choice ~ NominalPrice + commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet + alt, data=subset(LogitData, rent_own == "1"))
+summary(Renters)
+ResourceSelection::hoslem.test(Renters$y, Renters$fitted.values)
+```
+
+### Owner's Model
+
+```{r Owners Model, echo = FALSE}
+Owners <- glm(choice ~ NominalPrice + commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet + alt, data=subset(LogitData, rent_own == "2"))
+summary(Owners)
+ResourceSelection::hoslem.test(Owners$y, Owners$fitted.values)
+```
+
+### Low Income
+
+```{r Low Income, echo=FALSE}
+LowI <- glm(choice ~ NominalPrice + commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet + alt, data=subset(LogitData, income == "1" | income == "2" | income == "3"))
+summary(LowI)
+ResourceSelection::hoslem.test(LowI$y, LowI$fitted.values)
+```
+
+### Middle Income
+
+```{r Middle income, echo=FALSE}
+MiddleI <- glm(choice ~ NominalPrice + commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet + alt, data=subset(LogitData, income == "4" | income == "5"))
+summary(MiddleI)
+ResourceSelection::hoslem.test(MiddleI$y, MiddleI$fitted.values)
+```
+
+### High Income
+
+```{r High Income, echo=FALSE}
+HighI <- glm(choice ~ NominalPrice + commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet + alt, data=subset(LogitData, income == "6" | income == "7" | income == "8" | income == "9" | income == "10"))
+summary(HighI)
+ResourceSelection::hoslem.test(HighI$y, HighI$fitted.values)
+```
