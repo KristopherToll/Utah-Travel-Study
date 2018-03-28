@@ -33,10 +33,10 @@ library(ResourceSelection)
 hoslem.test(FullModel$y, FullModel$fitted.values)
 
 
+LogitData$alt1 <- ifelse(LogitData$alt == "2", "0", "1")
 
 
-
-res1 <- mlogit::mlogit(choice ~ -1 | commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet | NominalPrice | alt,
+res1 <- mlogit::mlogit(choice ~ -1 + commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet + NominalPrice + alt1,
                        data = subset(LogitData), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
 
 res2 <- mlogit::mlogit(choice ~ -1 | commute + destinations + homes + streets + transit + ParkingDriveway  + ParkingOffStreet | NominalPrice,
@@ -45,7 +45,7 @@ res2 <- mlogit::mlogit(choice ~ -1 | commute + destinations + homes + streets + 
 res3 <- mlogit::mlogit(choice ~ commute + destinations + transit | NominalPrice,
                        data = subset(LogitData), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
 
-res4 <- mlogit::mlogit(choice ~ -1| commute + destinations + transit | NominalPrice,
-                       data = subset(LogitData), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
+res4 <- mlogit::mlogit(choice ~ commute + destinations + transit + NominalPrice + streets + ParkingDriveway,
+                       data = subset(LogitData), shape = "long", alt.var = "alt", id = "id")
 
 
