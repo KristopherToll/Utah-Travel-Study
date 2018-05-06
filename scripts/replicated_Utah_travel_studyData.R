@@ -1,4 +1,4 @@
-    ## Replicated Utah Study ##
+    ## Replicated Data Utah Study ##
 
 # Kristopher C. Toll
 
@@ -24,34 +24,24 @@ LogitData <- mlogit.data(ResidentialChoice_ChoiceExperimentsData, shape = "wide"
 
 # rename levels of each variable
 
-LogitData$commute <- ifelse(LogitData$commute == "1", "WalkingDistance", ifelse(LogitData$commute == "2", "5Miles", ifelse(LogitData$commute == "3", "10Miles", "20Miles")))
-LogitData$destinations <- ifelse(LogitData$destinations == "1", "WalkingDistance", ifelse(LogitData$destinations == "2", "LessThan3Miles", ifelse(LogitData$destinations == "3", "3To10Miles", "MoreThan10Miles")))
-LogitData$homes <- ifelse(LogitData$homes == "1", "QuartAcreSingleHomesApt", ifelse(LogitData$homes == "2", "HalfAcreSingleHomesApt", ifelse(LogitData$homes == "3", "HalfAcreHomes", "1+AcreHomes")))
-LogitData$parking <- ifelse(LogitData$parking == "1", "OwnDrivewayOrGarage", ifelse(LogitData$parking == "2", "OnStreetOrInFreeLot", "OffStreetRentalLot"))
+LogitData$commute <- ifelse(LogitData$commute == "1", "Walking Distance", ifelse(LogitData$commute == "2", "5 Miles", ifelse(LogitData$commute == "3", "10 Miles", "20 Miles")))
+LogitData$destinations <- ifelse(LogitData$destinations == "1", "Walking Distance", ifelse(LogitData$destinations == "2", "Less Than 3 Miles", ifelse(LogitData$destinations == "3", "3 To 10 Miles", "More Than 10 Miles")))
+LogitData$homes <- ifelse(LogitData$homes == "1", "Quart Acre Single Homes Apt", ifelse(LogitData$homes == "2", "Half Acre Single Homes Apt", ifelse(LogitData$homes == "3", "Half Acre Homes", "1+ Acre Homes")))
+LogitData$parking <- ifelse(LogitData$parking == "1", "Own Driveway Or Garage", ifelse(LogitData$parking == "2", "On Street Or In Free Lot", "Off Street Rental Lot"))
 LogitData$price <- ifelse(LogitData$price == "1", "0.8", ifelse(LogitData$price == "2", "0.9", ifelse(LogitData$price == "3", "1", ifelse(LogitData$price == "4", "1.1", "1.2"))))
-LogitData$streets <- ifelse(LogitData$streets == "1", "ForCars", "ForCarsPedBikes")
-LogitData$transit <- ifelse(LogitData$transit == "1", "WalkingDistanceToRailBus", ifelse(LogitData$transit == "2", "WalkingToBus5mileToRail", ifelse(LogitData$transit == "3", "5MiletoBusRail", "10MiletoBusRail")))
+LogitData$streets <- ifelse(LogitData$streets == "1", "For Cars", "For Cars Ped Bikes")
+LogitData$transit <- ifelse(LogitData$transit == "1", "Walking Distance To Rail and Bus", ifelse(LogitData$transit == "2", "Walking To Bus 5 mile To Rail", ifelse(LogitData$transit == "3", "5 Mile to Bus and Rail", "10 Mile to Bus and Rail")))
 
 # factor price so 0 is omited in models
 
 LogitData$price <- factor(LogitData$price, levels = c("1", "0.8", "0.9", "1.1", "1.2"))
-LogitData$commute <- relevel(as.factor(LogitData$commute), ref = "WalkingDistance")
-LogitData$destinations <- relevel(as.factor(LogitData$destinations), ref = "WalkingDistance")
-LogitData$homes <- relevel(as.factor(LogitData$homes), ref = "QuartAcreSingleHomesApt")
-LogitData$streets <- relevel(as.factor(LogitData$streets), ref = "ForCars")
-LogitData$transit <- relevel(as.factor(LogitData$transit), ref = "WalkingDistanceToRailBus")
-LogitData$parking <- relevel(as.factor(LogitData$parking), ref = "OwnDrivewayOrGarage")
+LogitData$commute <- relevel(as.factor(LogitData$commute), ref = "Walking Distance")
+LogitData$destinations <- relevel(as.factor(LogitData$destinations), ref = "Walking Distance")
+LogitData$homes <- relevel(as.factor(LogitData$homes), ref = "Quart Acre Single Homes Apt")
+LogitData$streets <- relevel(as.factor(LogitData$streets), ref = "For Cars")
+LogitData$transit <- relevel(as.factor(LogitData$transit), ref = "Walking Distance To Rail and Bus")
+LogitData$parking <- relevel(as.factor(LogitData$parking), ref = "Own Driveway Or Garage")
 
-  ## REPILCATED MODELS FROM UTAH TRAVEL STUDY ##
-
-# Model with no intercept and with alt variable included
-
-res1 <- mlogit(choice ~ -1 + commute + destinations + homes + streets + transit + parking + price + alt,
-                       data = subset(LogitData), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
-
-# Model With Intercept and alt
-res2 <- mlogit(choice ~ commute + destinations + homes + streets + transit + parking + price,
-               data = subset(LogitData), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
 
 
 ## ADDING DOLLAR VALUES TO PRICE ##
@@ -85,33 +75,18 @@ LogitData2 <- plyr::join(LogitData, ResidentialDemo, type = "inner")
 
 LogitData2$DiffNominalPrice <- ifelse(LogitData2$price_n == 0, 0, LogitData2$HomeRentPrice*LogitData2$price_n - LogitData2$HomeRentPrice)
 LogitData2$CompNominalPrice  <- ifelse(LogitData2$price_n == 0, LogitData2$HomeRentPrice, LogitData2$HomeRentPrice*LogitData2$price_n)
+
 # Reorder columns 
 
 LogitData2 <- LogitData2[c(1:13, 189, 190, 191, 14:188)]
 
- ## Run Models with NominalPrice Variable ##
 
 # scale price variables by 1000
 
 LogitData2$DiffNominalPrice_s <- LogitData2$DiffNominalPrice/1000
 LogitData2$CompNominalPrice_s <- LogitData2$CompNominalPrice/1000
 
-# Using Scaled DiffNominalPrice_s
-res3 <- mlogit(choice ~ commute + destinations + homes + streets + transit + parking + DiffNominalPrice_s,
-               data = subset(LogitData2), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
+# Save LogitData2 for modeling
 
-# Using Scaled CompeNominalPrice_s
-res4 <- mlogit(choice ~ commute + destinations + homes + streets + transit + parking + CompNominalPrice_s,
-               data = subset(LogitData2), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
-
-#Doesn't work
-res5 <- mlogit(choice ~ commute + destinations + homes +  DiffNominalPrice,
-               data = subset(LogitData2, LogitData2$rent_own == "1"), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
-
-# works with price_n
-res6 <- mlogit(choice ~ commute + destinations + homes + streets + transit + parking + price_n,
-               data = subset(LogitData2), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
-
-   ## Lets try binning ##
-
-# Histogram
+write.csv2(LogitData2, file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/MasterLogitData.csv")
+saveRDS(LogitData2, file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/MasterLogitData.rds")
