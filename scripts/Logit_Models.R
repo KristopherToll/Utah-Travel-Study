@@ -13,6 +13,7 @@ MasterLogitData <- readRDS(file = "C:/Users/Kristopher/odrive/Box/Utah Travel St
   ## Replicated Results ##
 
 # Replicated Model
+
 res1 <- mlogit(choice ~ commute + destinations + homes + streets + transit + parking + price,
                data = subset(MasterLogitData), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
 
