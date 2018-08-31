@@ -1,0 +1,21 @@
+---
+title: "Model Comparison"
+author: "Kristopher C. Toll"
+date: "August 30, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Replicated Models
+
+# Price Superimposed
+
+## Nominal Price
+
+## Relative Price
+
+# Histograms
+

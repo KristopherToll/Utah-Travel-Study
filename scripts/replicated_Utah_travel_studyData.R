@@ -90,3 +90,20 @@ LogitData2$CompNominalPrice_s <- LogitData2$CompNominalPrice/1000
 
 write.csv2(LogitData2, file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/MasterLogitData.csv")
 saveRDS(LogitData2, file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/MasterLogitData.rds")
+
+
+MasterLogitData <- readRDS(file = "C:/Users/Kristopher/odrive/Box/Utah Travel Study/modified_data/MasterLogitData.rds")
+
+options(scipen = 9999)
+
+hist((MasterLogitData$CompNominalPrice))
+
+hist((MasterLogitData$CompNominalPrice/1000))
+
+hist(log(MasterLogitData$CompNominalPrice))
+
+hist(log(MasterLogitData$HomeRentPrice), breaks = 500, freq = FALSE)
+
+hist(log(MasterLogitData$HomeRentPrice), breaks = 500, freq = FALSE)
+
+hist(subset(MasterLogitData, rent_own != "2")$HomeRentPrice)
