@@ -22,6 +22,10 @@ ResidentialChoice_ChoiceExperimentsData$id <- as.numeric(as.factor(ResidentialCh
 library(mlogit)
 LogitData <- mlogit.data(ResidentialChoice_ChoiceExperimentsData, shape = "wide", choice = "choice", sep = "", varying = c(5:18), alt.levels = c(1,2), id="id")
 
+
+
+
+
 # rename levels of each variable
 
 LogitData$commute <- ifelse(LogitData$commute == "1", "Walking Distance", ifelse(LogitData$commute == "2", "5 Miles", ifelse(LogitData$commute == "3", "10 Miles", "20 Miles")))
