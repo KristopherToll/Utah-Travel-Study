@@ -258,6 +258,7 @@ stargazer(Home_Tract_Model_div.1, Home_Tract_Model_div.2, Home_Tract_Model_div.3
 
 
 
+<<<<<<< HEAD
           ######## Graphics and Models for Over and Under Valuation #######
 
 
@@ -380,27 +381,6 @@ stargazer(Home_Value_Model_Over_No.Out, Home_Value_Model_Under_No.Out, Home_Valu
           type = "html",
           title = "Outlier Removed Models With Stated Value",
           out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OverUnderNoOutmodels.htm")
-
-
-
-
-
-
-# Plots of Data
-library(ggplot2)
-ggplot( data = ResChoice_w_CensTract, aes(x = Relative_Change_Price)) + geom_histogram(binwidth = 7100) + labs(title = "") 
-
-ResChoice_w_CensTract$Price_div <- ResChoice_w_CensTract$Relative_Change_Price/1000
-
-ggplot( data = ResChoice_w_CensTract, aes(x = Price_div)) + geom_histogram(binwidth = 7.1) + labs(title = "") 
-
-
-ggplot( data = subset(ResChoiceData, ResChoiceData$rent_own == "2"), aes(x = Relative_Change_Price)) + geom_histogram(binwidth = 7100) + labs(title = "") 
-
-ResChoiceData$Price_div <- ResChoiceData$Relative_Change_Price/1000
-
-ggplot( data = ResChoiceData, aes(x = Price_div)) + geom_histogram(binwidth = 7.1) + labs(title = "") 
-
 
 
 
