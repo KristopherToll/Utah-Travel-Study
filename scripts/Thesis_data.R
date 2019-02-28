@@ -318,37 +318,35 @@ ggplot( data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_Hom
 
 Over_Ratio_mean <- mean(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 1)$Ratio_BTW_HomeV_Estimate)
 Over_Ratio_sd <- sd(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 1)$Ratio_BTW_HomeV_Estimate)
+O <- Over_Ratio_mean + 3 * Over_Ratio_sd
 
 ggplot( data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 
-                        1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 3 * 
-                        Over_Ratio_sd), aes(x = Ratio_BTW_HomeV_Estimate)) + geom_histogram(binwidth = 0.93) + labs(title = "")
-
+                        1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), aes(x = Ratio_BTW_HomeV_Estimate)) + geom_histogram(binwidth = 2.3) + labs(title = "") 
 
 Under_Ratio_mean <- mean(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 1)$Ratio_BTW_HomeV_Estimate)
 Under_Ratio_sd <- sd(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 1)$Ratio_BTW_HomeV_Estimate)
+U <- Under_Ratio_mean - 3*Under_Ratio_sd
 
 ggplot( data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 
-                        1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 3 * 
-                        Under_Ratio_sd), aes(x = Ratio_BTW_HomeV_Estimate)) + geom_histogram(binwidth = 0.0032) + labs(title = "") 
-
+                        1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U), aes(x = Ratio_BTW_HomeV_Estimate)) + geom_histogram(binwidth = 0.019) + labs(title = "") 
 
 
 
 Home_Value_Model_Over_No.Out <- glm(choice ~ commute + destinations + homes + parking + streets + transit + I(S_Relative_Change_Price/1000),
-                                    data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 3 * Over_Ratio_sd), na.action = na.omit, family = binomial)
+                                    data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), na.action = na.omit, family = binomial)
 Home_Value_Model_Over_No.Out_Robust <- sqrt(diag(vcovHC(Home_Value_Model_Over_No.Out, type = "HC0")))
 Home_Value_Model_Over_No.Out.pr2 <- round(1 - Home_Value_Model_Over_No.Out$deviance/Home_Value_Model_Over_No.Out$null.deviance, digits = 3)
 
 
 
 Home_Value_Model_Under_No.Out <- glm(choice ~ commute + destinations + homes + parking + streets + transit + I(S_Relative_Change_Price/1000),
-                                     data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 3 * Under_Ratio_sd), na.action = na.omit, family = binomial)
+                                     data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U), na.action = na.omit, family = binomial)
 Home_Value_Model_Under_No.Out_Robust <- sqrt(diag(vcovHC(Home_Value_Model_Under_No.Out, type = "HC0")))
 Home_Value_Model_Under_No.Out.pr2 <- round(1 - Home_Value_Model_Under_No.Out$deviance/Home_Value_Model_Under_No.Out$null.deviance, digits = 3)
 
 
 Home_Value_Model_No.Out <- glm(choice ~ commute + destinations + homes + parking + streets + transit + I(S_Relative_Change_Price/1000),
-                               data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 3* Under_Ratio_sd & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 3 * Over_Ratio_sd), na.action = na.omit, family = binomial)
+                               data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), na.action = na.omit, family = binomial)
 Home_Value_Model_No.Out_Robust <- sqrt(diag(vcovHC(Home_Value_Model_No.Out, type = "HC0")))
 Home_Value_Model_No.Out.pr2 <- round(1 - Home_Value_Model_No.Out$deviance/Home_Value_Model_No.Out$null.deviance, digits = 3)
 
@@ -360,14 +358,16 @@ nrow(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimat
 table(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 2)$Ratio_BTW_HomeV_Estimate)/20
 
 Home_Value_Model_No.Out2 <- glm(choice ~ commute + destinations + homes + parking + streets + transit + I(S_Relative_Change_Price/1000),
-                               data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 3* Under_Ratio_sd & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 2), na.action = na.omit, family = binomial)
+                               data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 2), na.action = na.omit, family = binomial)
 Home_Value_Model_No.Out2_Robust <- sqrt(diag(vcovHC(Home_Value_Model_No.Out2, type = "HC0")))
 Home_Value_Model_No.Ou2t_No.Out.pr2 <- round(1 - Home_Value_Model_No.Out2$deviance/Home_Value_Model_No.Out2$null.deviance, digits = 3)
 
 
+# Number of over valuations Three time the median estimate
+
 
 Home_Value_Model_No.Out3 <- glm(choice ~ commute + destinations + homes + parking + streets + transit + I(S_Relative_Change_Price/1000),
-                               data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 3* Under_Ratio_sd & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 3), na.action = na.omit, family = binomial)
+                               data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < 3), na.action = na.omit, family = binomial)
 Home_Value_Model_No.Out3_Robust <- sqrt(diag(vcovHC(Home_Value_Model_No.Out3, type = "HC0")))
 Home_Value_Model_No.Out3.pr2 <- round(1 - Home_Value_Model_No.Out3$deviance/Home_Value_Model_No.Out3$null.deviance, digits = 3)
 
@@ -375,7 +375,7 @@ Home_Value_Model_No.Out3.pr2 <- round(1 - Home_Value_Model_No.Out3$deviance/Home
 stargazer(Home_Value_Model_Over_No.Out, Home_Value_Model_Under_No.Out, Home_Value_Model_No.Out, Home_Value_Model_No.Out2, Home_Value_Model_No.Out3,
           se = list(Home_Value_Model_Over_No.Out_Robust, Home_Value_Model_Under_No.Out_Robust, Home_Value_Model_No.Out_Robust, Home_Value_Model_No.Out2_Robust, Home_Value_Model_No.Out3_Robust),
           no.space = TRUE,
-          add.lines = list(c("Puesdo R2", Home_Value_Model_Over_No.Out.pr2, Home_Value_Model_Under_No.Out.pr2, Home_Value_Model_No.Out.pr2, Home_Value_Model_No.Ou2t_No.Out.pr2, Home_Value_Model_No.Out3.pr2)),
+          add.lines = list(c("Puesdo R2", Home_Value_Model_Over_No.Out.pr2, Home_Value_Model_Under_No.Out.pr2, Home_Value_Model_No.Out.pr2, Home_Value_Model_No.Ou2t_No.Out.pr2, Home_Value_Model_No.Out3.pr2, NULL)),
           column.labels = c("Over Valued Estimates", "Under Valued Estimates", "Both Over and Under Valued", "Over 2 is the Cut off", "Over 3 is the Cut off"),
           type = "html",
           title = "Outlier Removed Models With Stated Value",
