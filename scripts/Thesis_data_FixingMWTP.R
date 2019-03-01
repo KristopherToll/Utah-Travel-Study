@@ -39,9 +39,24 @@ ResidentialChoice_PersonHouseholdData <- ResidentialChoice_PersonHouseholdData %
 
 sapply(ResidentialChoice_PersonHouseholdData, class)
 
+# Rename and Refactor Variables of Interest
+
+ResidentialChoice_PersonHouseholdData$Income_I <- ifelse(ResidentialChoice_PersonHouseholdData$income == "1" | ResidentialChoice_PersonHouseholdData$income == "2" | ResidentialChoice_PersonHouseholdData$income == "3" | ResidentialChoice_PersonHouseholdData$income == "4", "Low", ifelse(ResidentialChoice_PersonHouseholdData$income == "5" | ResidentialChoice_PersonHouseholdData$income == "6" | ResidentialChoice_PersonHouseholdData$income == "7", " Mid", ifelse(ResidentialChoice_PersonHouseholdData$income == "8" | ResidentialChoice_PersonHouseholdData$income == "9" | ResidentialChoice_PersonHouseholdData$income == "10", "High", "NA")))
+ResidentialChoice_PersonHouseholdData$Income_I <- factor(ResidentialChoice_PersonHouseholdData$Income_I, levels = c("Low", "Mid", "High", "NA"))
+
+ResidentialChoice_PersonHouseholdData$Education_I <- 
+
+
+
+
 
 # Choice Experiment Data
 ResidentialChoice_ChoiceExperimentsData <- read_excel("C:/Users/A01246966/Box/Utah Travel Study/Utah Travel Study 2012/2. Data and Materials/7. Residential Choice Survey/2. Choice Experiments Dataset/ResidentialChoice_ChoiceExperimentsData.xlsx")
+
+sapply(ResidentialChoice_ChoiceExperimentsData, class)
+
+
+ResidentialChoice_ChoiceExperimentsData <- ResidentialChoice_ChoiceExperimentsData %>% mutate_at(vars(1:18), funs(as.factor))
 
 
 
@@ -75,10 +90,6 @@ sapply(LogitData, class)
 
 # Join Logit data with demographics
 ResChoiceData <- join(LogitData, ResidentialChoice_PersonHouseholdData, type = "inner")
-
-
-
-
 
 
 # Number one
@@ -158,7 +169,7 @@ Home_Value_Model_robust <- sqrt(diag(vcovHC(Home_Value_Model, type = "HC0")))
 Home_Value_Model.pr2 <- round(1 - Home_Value_Model$deviance/Home_Value_Model$null.deviance, digits = 3)
 
 
-Renter_Value_Model <- glm(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = subset(ResChoiceData, ResChoiceData$rent_own == "1"), na.action = na.omit, family = binomial)
+Renter_Value_Model <- glm(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = subset(ResChoiceData, ResChoiceData$rent_own == "1" & ResChoiceData$Stated_Price > 49), na.action = na.omit, family = binomial)
 Renter_Value_Model_robust <- sqrt(diag(vcovHC(Renter_Value_Model, type = "HC0")))
 Renter_Value_Model.pr2 <- round(1 - Renter_Value_Model$deviance/Renter_Value_Model$null.deviance, digits = 3)
 
@@ -258,7 +269,6 @@ stargazer(Home_Tract_Model_div.1, Home_Tract_Model_div.2, Home_Tract_Model_div.3
 
 
 
-<<<<<<< HEAD
           ######## Graphics and Models for Over and Under Valuation #######
 
 
@@ -355,7 +365,7 @@ Home_Value_Model_No.Out.pr2 <- round(1 - Home_Value_Model_No.Out$deviance/Home_V
 
 # Number of over valuations two time the median estimate
 
-nrow(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 2))/20
+nrow(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate <1 ))/20
 table(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 2)$Ratio_BTW_HomeV_Estimate)/20
 
 Home_Value_Model_No.Out2 <- glm(choice ~ commute + destinations + homes + parking + streets + transit + I(S_Relative_Change_Price/1000),
@@ -383,7 +393,8 @@ stargazer(Home_Value_Model_Over_No.Out, Home_Value_Model_Under_No.Out, Home_Valu
           out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OverUnderNoOutmodels.htm")
 
 
-
+saveRDS(ResChoice_w_CensTract, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoice_w_CensTract.RDS")
+saveRDS(subset(ResChoiceData, ResChoiceData$rent_own == "1" & ResChoiceData$Stated_Price > 49), file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.RDS")
 
 
 
