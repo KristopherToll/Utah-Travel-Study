@@ -32,7 +32,7 @@ GeoID <- read_excel("C:/Users/A01246966/Box/Utah Travel Study/Utah Travel Study 
 
 # Household data
 library(dplyr)
-ResidentialChoice_PersonHouseholdData <- read_excel("C:/Users/A01246966/Box/Utah Travel Study/Utah Travel Study 2012/2. Data and Materials/7. Residential Choice Survey/1. Person Household Dataset/ResidentialChoice_PersonHouseholdData.xlsx")
+ResidentialChoice_PersonHouseholdData <- read_excel("C:/Users/Kristopher/odrive/Box/Utah Travel Study/Utah Travel Study 2012/2. Data and Materials/7. Residential Choice Survey/1. Person Household Dataset/ResidentialChoice_PersonHouseholdData.xlsx")
 
 # Convert Variable Types
 ResidentialChoice_PersonHouseholdData <- ResidentialChoice_PersonHouseholdData %>% mutate_at(vars(2:4, 5, 6, 7, 10:126, 130, 132:176), funs(as.factor))
@@ -41,11 +41,29 @@ sapply(ResidentialChoice_PersonHouseholdData, class)
 
 # Rename and Refactor Variables of Interest
 
-ResidentialChoice_PersonHouseholdData$Income_I <- ifelse(ResidentialChoice_PersonHouseholdData$income == "1" | ResidentialChoice_PersonHouseholdData$income == "2" | ResidentialChoice_PersonHouseholdData$income == "3" | ResidentialChoice_PersonHouseholdData$income == "4", "Low", ifelse(ResidentialChoice_PersonHouseholdData$income == "5" | ResidentialChoice_PersonHouseholdData$income == "6" | ResidentialChoice_PersonHouseholdData$income == "7", " Mid", ifelse(ResidentialChoice_PersonHouseholdData$income == "8" | ResidentialChoice_PersonHouseholdData$income == "9" | ResidentialChoice_PersonHouseholdData$income == "10", "High", "NA")))
+ResidentialChoice_PersonHouseholdData$Income_I <- ifelse(ResidentialChoice_PersonHouseholdData$income == "1" | ResidentialChoice_PersonHouseholdData$income == "2" | ResidentialChoice_PersonHouseholdData$income == "3" | ResidentialChoice_PersonHouseholdData$income == "4", "Low", ifelse(ResidentialChoice_PersonHouseholdData$income == "5" | ResidentialChoice_PersonHouseholdData$income == "6" | ResidentialChoice_PersonHouseholdData$income == "7", "Mid", ifelse(ResidentialChoice_PersonHouseholdData$income == "8" | ResidentialChoice_PersonHouseholdData$income == "9" | ResidentialChoice_PersonHouseholdData$income == "10", "High", "NA")))
 ResidentialChoice_PersonHouseholdData$Income_I <- factor(ResidentialChoice_PersonHouseholdData$Income_I, levels = c("Low", "Mid", "High", "NA"))
 
-ResidentialChoice_PersonHouseholdData$Education_I <- 
+ResidentialChoice_PersonHouseholdData$Education_I <- ifelse(ResidentialChoice_PersonHouseholdData$education == "1", "Less than High School", ifelse(ResidentialChoice_PersonHouseholdData$education == "2", "High School Graduate", ifelse(ResidentialChoice_PersonHouseholdData$education == "3", "Some College", ifelse(ResidentialChoice_PersonHouseholdData$education == "4", "Vocational/Tech Training", ifelse(ResidentialChoice_PersonHouseholdData$education == "5", "Associates", ifelse(ResidentialChoice_PersonHouseholdData$education == "6", "Bachelors", ifelse(ResidentialChoice_PersonHouseholdData$education == "7", "Graduate/Post Docterate", "NA")))))))
+ResidentialChoice_PersonHouseholdData$Education_I <- factor(ResidentialChoice_PersonHouseholdData$Education_I, levels = c("Less than High School", "High School Graduate", "Some College", "Vocational/Tech Training", "Associates", "Bachelors", "Graduate/Post Docterate", "NA"))
 
+ResidentialChoice_PersonHouseholdData$employment_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$employment), c("1" = "full-time", "2"= "part-time", "3" = "Self-employment (full/part)", "4" = "student", "5"= "student", "6" = "Homemaker", "7" = "Retired", "8" = "Not Currently Employed", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$employment_I <- factor(ResidentialChoice_PersonHouseholdData$employment_I, levels = c("full-time", "part-time", "Self-employment (full/part)", "student", "Homemaker", "Retired", "Not Currently Employed", "NA"))
+
+ResidentialChoice_PersonHouseholdData$age_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$age), c("4" = "age 18-34", "5"= "age 18-34", "6" = "age 35-54", "7" = "age 35-54", "8"= "age 55 or older", "9" = "age 55 or older", "10" = "age 55 or older", "11" = "age 55 or older", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$age_I <- factor(ResidentialChoice_PersonHouseholdData$age_I, levels = c("age 18-34", "age 35-54", "age 55 or older", "NA"))
+
+ResidentialChoice_PersonHouseholdData$gender_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$gender), c("1" = "male", "2"= "female", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$gender_I <- factor(ResidentialChoice_PersonHouseholdData$gender_I, levels = c("male", "female", "NA"))
+
+ResidentialChoice_PersonHouseholdData$home_regionid_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$home_regionid), c("1" = "Cache", "2"= "WFRC_MAG", "3" = "Dixie", "4" = "Utah Other", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$home_regionid_I <- factor(ResidentialChoice_PersonHouseholdData$home_regionid_I, levels = c("Cache", "WFRC_MAG", "Dixie", "Utah Other", "NA"))
+
+ResidentialChoice_PersonHouseholdData$plan_move_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$home_regionid), c("1" = "Yes", "2"= "No", "3" = "Unsure", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$plan_move_I <- factor(ResidentialChoice_PersonHouseholdData$plan_move_I, levels = c("Yes", "No", "NA"))
+
+ResidentialChoice_PersonHouseholdData$curr_place_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_place_type), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rual", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$curr_place_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_place_type_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rual", "NA"))
 
 
 
