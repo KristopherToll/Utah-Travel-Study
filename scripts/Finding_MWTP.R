@@ -14,4 +14,3 @@ sapply(RenterData, class)
 
 # Income 
 
-RenterData$Income_a <- ifelse()
