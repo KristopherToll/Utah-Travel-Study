@@ -62,10 +62,17 @@ ResidentialChoice_PersonHouseholdData$home_regionid_I <- factor(ResidentialChoic
 ResidentialChoice_PersonHouseholdData$plan_move_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$home_regionid), c("1" = "Yes", "2"= "No", "3" = "Unsure", "NA" = "NA")))
 ResidentialChoice_PersonHouseholdData$plan_move_I <- factor(ResidentialChoice_PersonHouseholdData$plan_move_I, levels = c("Yes", "No", "NA"))
 
-ResidentialChoice_PersonHouseholdData$curr_place_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_place_type), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rual", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$curr_place_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_place_type_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rual", "NA"))
+ResidentialChoice_PersonHouseholdData$curr_place_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_place_type), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$curr_place_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_place_type_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"))
 
+ResidentialChoice_PersonHouseholdData$curr_res_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome", "3" = "Multi Family 3 or less homes", "4" = "Building 3 or less homes", "5" = "Building 4 or more homes", "6" = "Mobile home", "7" = "Dorms", "8" = "Other (RV, Van, boat, ect.)", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$curr_res_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_res_type_I, levels = c("Single Family Detached Home", "Townhome", "Multi Family 3 or less homes", "Building 3 or less homes", "Building 4 or more homes", "Mobile home", "Dorms", "Other (RV, Van, boat, ect.)", "NA"))
 
+ResidentialChoice_PersonHouseholdData$prefer_place_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_place), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$prefer_place_I <- factor(ResidentialChoice_PersonHouseholdData$prefer_place_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"))
+
+ResidentialChoice_PersonHouseholdData$prefer_res_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome", "3" = "Multi Family 3 or less homes", "4" = "Building 3 or less homes", "5" = "Building 4 or more homes", "6" = "Mobile home", "7" = "Dorms", "8" = "Other (RV, Van, boat, ect.)", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$prefer_res_type_I <- factor(ResidentialChoice_PersonHouseholdData$prefer_res_type_I, levels = c("Single Family Detached Home", "Townhome", "Multi Family 3 or less homes", "Building 3 or less homes", "Building 4 or more homes", "Mobile home", "Dorms", "Other (RV, Van, boat, ect.)", "NA"))
 
 
 # Choice Experiment Data
