@@ -31,8 +31,8 @@ GeoID <- read_excel("C:/Users/A01246966/Box/Utah Travel Study/Utah Travel Study 
                                            sheet = "Data")[,c(1,8:9)]
 
 # Household data
-library(dplyr)
-ResidentialChoice_PersonHouseholdData <- read_excel("C:/Users/Kristopher/odrive/Box/Utah Travel Study/Utah Travel Study 2012/2. Data and Materials/7. Residential Choice Survey/1. Person Household Dataset/ResidentialChoice_PersonHouseholdData.xlsx")
+library(plyr)
+ResidentialChoice_PersonHouseholdData <- read_excel("C:/Users/A01246966/Box/Utah Travel Study/Utah Travel Study 2012/2. Data and Materials/7. Residential Choice Survey/1. Person Household Dataset/ResidentialChoice_PersonHouseholdData.xlsx")
 
 # Convert Variable Types
 ResidentialChoice_PersonHouseholdData <- ResidentialChoice_PersonHouseholdData %>% mutate_at(vars(2:4, 5, 6, 7, 10:126, 130, 132:176), funs(as.factor))
@@ -41,38 +41,41 @@ sapply(ResidentialChoice_PersonHouseholdData, class)
 
 # Rename and Refactor Variables of Interest
 
-ResidentialChoice_PersonHouseholdData$Income_I <- ifelse(ResidentialChoice_PersonHouseholdData$income == "1" | ResidentialChoice_PersonHouseholdData$income == "2" | ResidentialChoice_PersonHouseholdData$income == "3" | ResidentialChoice_PersonHouseholdData$income == "4", "Low", ifelse(ResidentialChoice_PersonHouseholdData$income == "5" | ResidentialChoice_PersonHouseholdData$income == "6" | ResidentialChoice_PersonHouseholdData$income == "7", "Mid", ifelse(ResidentialChoice_PersonHouseholdData$income == "8" | ResidentialChoice_PersonHouseholdData$income == "9" | ResidentialChoice_PersonHouseholdData$income == "10", "High", "NA")))
-ResidentialChoice_PersonHouseholdData$Income_I <- factor(ResidentialChoice_PersonHouseholdData$Income_I, levels = c("Low", "Mid", "High", "NA"))
+library(forcats)
 
-ResidentialChoice_PersonHouseholdData$Education_I <- ifelse(ResidentialChoice_PersonHouseholdData$education == "1", "Less than High School", ifelse(ResidentialChoice_PersonHouseholdData$education == "2", "High School Graduate", ifelse(ResidentialChoice_PersonHouseholdData$education == "3", "Some College", ifelse(ResidentialChoice_PersonHouseholdData$education == "4", "Vocational/Tech Training", ifelse(ResidentialChoice_PersonHouseholdData$education == "5", "Associates", ifelse(ResidentialChoice_PersonHouseholdData$education == "6", "Bachelors", ifelse(ResidentialChoice_PersonHouseholdData$education == "7", "Graduate/Post Docterate", "NA")))))))
-ResidentialChoice_PersonHouseholdData$Education_I <- factor(ResidentialChoice_PersonHouseholdData$Education_I, levels = c("Less than High School", "High School Graduate", "Some College", "Vocational/Tech Training", "Associates", "Bachelors", "Graduate/Post Docterate", "NA"))
+ResidentialChoice_PersonHouseholdData$Income_I <- ifelse(ResidentialChoice_PersonHouseholdData$income == "1" | ResidentialChoice_PersonHouseholdData$income == "2" | ResidentialChoice_PersonHouseholdData$income == "3" | ResidentialChoice_PersonHouseholdData$income == "4", "Low", ifelse(ResidentialChoice_PersonHouseholdData$income == "5" | ResidentialChoice_PersonHouseholdData$income == "6" | ResidentialChoice_PersonHouseholdData$income == "7", "Mid", ifelse(ResidentialChoice_PersonHouseholdData$income == "8" | ResidentialChoice_PersonHouseholdData$income == "9" | ResidentialChoice_PersonHouseholdData$income == "10", "High", "NA")))
+ResidentialChoice_PersonHouseholdData$Income_I <- factor(ResidentialChoice_PersonHouseholdData$Income_I, levels = c("Low", "Mid", "High", "NA"), exclude = "NA")
+#ResidentialChoice_PersonHouseholdData$Income_I <- fct_explicit_NA(ResidentialChoice_PersonHouseholdData$Income_I)
+
+ResidentialChoice_PersonHouseholdData$Education_I <- ifelse(ResidentialChoice_PersonHouseholdData$education == "1", "Less than High School", ifelse(ResidentialChoice_PersonHouseholdData$education == "2", "High School Graduate", ifelse(ResidentialChoice_PersonHouseholdData$education == "3", "Some College", ifelse(ResidentialChoice_PersonHouseholdData$education == "4", "VocatioNAl/Tech Training", ifelse(ResidentialChoice_PersonHouseholdData$education == "5", "Associates", ifelse(ResidentialChoice_PersonHouseholdData$education == "6", "Bachelors", ifelse(ResidentialChoice_PersonHouseholdData$education == "7", "Graduate/Post Docterate", "NA")))))))
+ResidentialChoice_PersonHouseholdData$Education_I <- factor(ResidentialChoice_PersonHouseholdData$Education_I, levels = c("Less than High School", "High School Graduate", "Some College", "VocatioNAl/Tech Training", "Associates", "Bachelors", "Graduate/Post Docterate", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$employment_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$employment), c("1" = "full-time", "2"= "part-time", "3" = "Self-employment (full/part)", "4" = "student", "5"= "student", "6" = "Homemaker", "7" = "Retired", "8" = "Not Currently Employed", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$employment_I <- factor(ResidentialChoice_PersonHouseholdData$employment_I, levels = c("full-time", "part-time", "Self-employment (full/part)", "student", "Homemaker", "Retired", "Not Currently Employed", "NA"))
+ResidentialChoice_PersonHouseholdData$employment_I <- factor(ResidentialChoice_PersonHouseholdData$employment_I, levels = c("full-time", "part-time", "Self-employment (full/part)", "student", "Homemaker", "Retired", "Not Currently Employed", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$age_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$age), c("4" = "age 18-34", "5"= "age 18-34", "6" = "age 35-54", "7" = "age 35-54", "8"= "age 55 or older", "9" = "age 55 or older", "10" = "age 55 or older", "11" = "age 55 or older", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$age_I <- factor(ResidentialChoice_PersonHouseholdData$age_I, levels = c("age 18-34", "age 35-54", "age 55 or older", "NA"))
+ResidentialChoice_PersonHouseholdData$age_I <- factor(ResidentialChoice_PersonHouseholdData$age_I, levels = c("age 18-34", "age 35-54", "age 55 or older", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$gender_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$gender), c("1" = "male", "2"= "female", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$gender_I <- factor(ResidentialChoice_PersonHouseholdData$gender_I, levels = c("male", "female", "NA"))
+ResidentialChoice_PersonHouseholdData$gender_I <- factor(ResidentialChoice_PersonHouseholdData$gender_I, levels = c("male", "female", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$home_regionid_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$home_regionid), c("1" = "Cache", "2"= "WFRC_MAG", "3" = "Dixie", "4" = "Utah Other", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$home_regionid_I <- factor(ResidentialChoice_PersonHouseholdData$home_regionid_I, levels = c("Cache", "WFRC_MAG", "Dixie", "Utah Other", "NA"))
+ResidentialChoice_PersonHouseholdData$home_regionid_I <- factor(ResidentialChoice_PersonHouseholdData$home_regionid_I, levels = c("Cache", "WFRC_MAG", "Dixie", "Utah Other", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$plan_move_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$home_regionid), c("1" = "Yes", "2"= "No", "3" = "Unsure", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$plan_move_I <- factor(ResidentialChoice_PersonHouseholdData$plan_move_I, levels = c("Yes", "No", "NA"))
+ResidentialChoice_PersonHouseholdData$plan_move_I <- factor(ResidentialChoice_PersonHouseholdData$plan_move_I, levels = c("Yes", "No", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$curr_place_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_place_type), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$curr_place_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_place_type_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"))
+ResidentialChoice_PersonHouseholdData$curr_place_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_place_type_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$curr_res_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome", "3" = "Multi Family 3 or less homes", "4" = "Building 3 or less homes", "5" = "Building 4 or more homes", "6" = "Mobile home", "7" = "Dorms", "8" = "Other (RV, Van, boat, ect.)", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$curr_res_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_res_type_I, levels = c("Single Family Detached Home", "Townhome", "Multi Family 3 or less homes", "Building 3 or less homes", "Building 4 or more homes", "Mobile home", "Dorms", "Other (RV, Van, boat, ect.)", "NA"))
+ResidentialChoice_PersonHouseholdData$curr_res_type_I <- factor(ResidentialChoice_PersonHouseholdData$curr_res_type_I, levels = c("Single Family Detached Home", "Townhome", "Multi Family 3 or less homes", "Building 3 or less homes", "Building 4 or more homes", "Mobile home", "Dorms", "Other (RV, Van, boat, ect.)", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$prefer_place_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_place), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$prefer_place_I <- factor(ResidentialChoice_PersonHouseholdData$prefer_place_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"))
+ResidentialChoice_PersonHouseholdData$prefer_place_I <- factor(ResidentialChoice_PersonHouseholdData$prefer_place_I, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$prefer_res_type_I <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome", "3" = "Multi Family 3 or less homes", "4" = "Building 3 or less homes", "5" = "Building 4 or more homes", "6" = "Mobile home", "7" = "Dorms", "8" = "Other (RV, Van, boat, ect.)", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$prefer_res_type_I <- factor(ResidentialChoice_PersonHouseholdData$prefer_res_type_I, levels = c("Single Family Detached Home", "Townhome", "Multi Family 3 or less homes", "Building 3 or less homes", "Building 4 or more homes", "Mobile home", "Dorms", "Other (RV, Van, boat, ect.)", "NA"))
+ResidentialChoice_PersonHouseholdData$prefer_res_type_I <- factor(ResidentialChoice_PersonHouseholdData$prefer_res_type_I, levels = c("Single Family Detached Home", "Townhome", "Multi Family 3 or less homes", "Building 3 or less homes", "Building 4 or more homes", "Mobile home", "Dorms", "Other (RV, Van, boat, ect.)", "NA"), exclude = "NA")
 
 
 # Choice Experiment Data
@@ -110,6 +113,8 @@ LogitData$streets <- factor(LogitData$streets, c("Primarily for Cars", "For Cars
 LogitData$transit <- revalue(as.factor(LogitData$transit), c("1" = "Rail station and bus within walking distance", "2" = "Bus stop within walking distance and Rail 5 miles away", "3" = "Rail and bus 5 miles away", "4" = "Rail and Bus 10 miles Away"))
 LogitData$transit <- factor(LogitData$transit, levels = c("Rail station and bus within walking distance", "Bus stop within walking distance and Rail 5 miles away", "Rail and bus 5 miles away", "Rail and Bus 10 miles Away"))
 
+LogitData$alt <- factor(LogitData$alt, levels = c("1", "2"))
+
 LogitData$price <- revalue(as.factor(LogitData$price), c("1" = "0.8", "2" = "0.9", "3" = "1", "4" = "1.1", "5" = "1.2"))
 sapply(LogitData, class)
 
@@ -135,6 +140,10 @@ ResChoice_w_CensTract$Relative_Change_Price <- ResChoice_w_CensTract$Change_in_P
 ResChoice_w_CensTract$Diff_BTW_HomeV_Estimate <- as.numeric(ResChoice_w_CensTract$home_price) - as.numeric(ResChoice_w_CensTract$`Estimate; Median value (dollars)`)
 ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate <- as.numeric(ResChoice_w_CensTract$home_price) / as.numeric(ResChoice_w_CensTract$`Estimate; Median value (dollars)`)
 
+ResChoice_w_CensTract$over_est <- ifelse(ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate >= 1, "0", "1")
+
+saveRDS(ResChoice_w_CensTract, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoice_w_CensTract.RDS")
+
 
 # Joining on Census Block
 
@@ -153,6 +162,8 @@ ResChoice_w_CensBlock$Relative_Change_Price <- ResChoice_w_CensBlock$Change_in_P
 ResChoice_w_CensBlock$Diff_BTW_HomeV_Estimate <- as.numeric(ResChoice_w_CensBlock$home_price) - as.numeric(ResChoice_w_CensBlock$`Estimate; Median value (dollars)`)
 ResChoice_w_CensBlock$Ratio_BTW_HomeV_Estimate <- as.numeric(ResChoice_w_CensBlock$home_price) / as.numeric(ResChoice_w_CensBlock$`Estimate; Median value (dollars)`)
 
+saveRDS(ResChoice_w_CensBlock, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoice_w_CensBlock.RDS")
+
 
 # Number Two and Three
 # ResChoice Data with Homeowners and renters linked to Home Values
@@ -166,6 +177,8 @@ ResChoiceData <- subset(ResChoiceData, ResChoiceData$Stated_Price != "NA")
 ResChoiceData$Change_in_Price <- as.numeric(ResChoiceData$Stated_Price) * as.numeric(levels(ResChoiceData$price))[ResChoiceData$price]
 
 ResChoiceData$Relative_Change_Price <- ResChoiceData$Change_in_Price - ResChoiceData$Stated_Price
+
+saveRDS(ResChoiceData, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.RDS")
 
 
 # Create Models
@@ -203,11 +216,12 @@ library(stargazer)
 stargazer(Home_Tract_Model, Home_Value_Model, Renter_Value_Model,
           se = list(Home_Tract_Model_robust, Home_Value_Model_robust, Renter_Value_Model_robust),
           no.space = TRUE,
+          intercept.bottom = FALSE,
           add.lines = list(c("Puesdo R2", Home_Tract_Model.pr2, Home_Value_Model.pr2, Renter_Value_Model.pr2)),
           column.labels = c("Home with Tract", "Home with Stated", "Renter with Stated"),
           type = "html",
-          title = "Parsimonious Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/Pmodels.htm")
+          title = "Parsimonious GLM Models",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/PGLMmodels.htm")
 
 
         
@@ -285,11 +299,12 @@ Renter_Value_Model.pr2_div.3 <- round(1 - Renter_Value_Model_div.3$deviance/Rent
 stargazer(Home_Tract_Model_div.1, Home_Tract_Model_div.2, Home_Tract_Model_div.3, Home_Value_Model_div.1, Home_Value_Model_div.2, Home_Value_Model_div.3,
           se = list(Home_Tract_Model_robust_div.1, Home_Tract_Model_robust_div.2, Home_Tract_Model_robust_div.3, Home_Value_Model_robust_div.1, Home_Value_Model_robust_div.2, Home_Value_Model_robust_div.3),
           no.space = TRUE,
+          intercept.bottom = FALSE,
           add.lines = list(c("Puesdo R2", Home_Tract_Model.pr2_div.1, Home_Tract_Model.pr2_div.2, Home_Tract_Model.pr2_div.3, Renter_Value_Model.pr2_div.1, Renter_Value_Model.pr2_div.2, Renter_Value_Model.pr2_div.3)),
           column.labels = c("Home with Tract", "Home with Tract", "Home with Tract", "Home with Stated", "Home with Stated", "Home with Stated"),
           type = "html",
-          title = "Price Divided by 1000",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/PDIVmodels.htm")
+          title = "GLM Scaled Price variables",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/PDIVGLMmodels.htm")
 
 
 
@@ -331,11 +346,12 @@ Home_Value_Model_Under.pr2.2 <- round(1 - Home_Tract_Model_Under$deviance/Home_T
 stargazer(Home_Tract_Model_Over, Home_Tract_Model_Under, Home_Value_Model_Over.2, Home_Value_Model_Under.2,
           se = list(Home_Tract_Model_Over_Robust, Home_Tract_Model_Under_Robust, Home_Tract_Model_Over_Robust.2, Home_Value_Model_Under_Robust.2),
           no.space = TRUE,
+          intercept.bottom = FALSE,
           add.lines = list(c("Puesdo R2", Home_Tract_Model_Over.pr2, Home_Tract_Model_Under.pr2, Home_Tract_Model_Over.pr2.2, Home_Value_Model_Under.pr2.2)),
           column.labels = c("Home with Tract(Over)", "Home with Tract(Under)", "Home with Stated(Over)", "Home with Stated(Under)"),
           type = "html",
-          title = "Over Under Value Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OverUndermodels.htm")
+          title = "GLM Over Under Value Models",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OverUnderGLMmodels.htm")
 
 
 
@@ -411,17 +427,43 @@ Home_Value_Model_No.Out3.pr2 <- round(1 - Home_Value_Model_No.Out3$deviance/Home
 stargazer(Home_Value_Model_Over_No.Out, Home_Value_Model_Under_No.Out, Home_Value_Model_No.Out, Home_Value_Model_No.Out2, Home_Value_Model_No.Out3,
           se = list(Home_Value_Model_Over_No.Out_Robust, Home_Value_Model_Under_No.Out_Robust, Home_Value_Model_No.Out_Robust, Home_Value_Model_No.Out2_Robust, Home_Value_Model_No.Out3_Robust),
           no.space = TRUE,
+          intercept.bottom = FALSE,
           add.lines = list(c("Puesdo R2", Home_Value_Model_Over_No.Out.pr2, Home_Value_Model_Under_No.Out.pr2, Home_Value_Model_No.Out.pr2, Home_Value_Model_No.Ou2t_No.Out.pr2, Home_Value_Model_No.Out3.pr2, NULL)),
-          column.labels = c("Over Valued Estimates", "Under Valued Estimates", "Both Over and Under Valued", "Over 2 is the Cut off", "Over 3 is the Cut off"),
+          column.labels = c("Over Valued Estimates, cut off at 3 SD above", "Under Valued Estimates, cutoff at 3 SD below", "Both Over and Under Valued, cutoff +- 3 SD", "Both over and Under, 2 times median cutoff and 3 SD under", "BOth over and under, 3 times median cutoff and 3 SD below"),
+          type = "html",
+          title = "GLM Outlier Removed Models With Stated Value",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OverUnderNoOutGLMmodels.htm")
+
+
+saveRDS(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OutlierRemovedData.RDS")
+saveRDS(subset(ResChoiceData, ResChoiceData$rent_own == "1" & ResChoiceData$Stated_Price > 49), file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/RenterData.RDS")
+
+
+library(nnet)
+
+a <- glm(choice ~ alt + commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000), data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O))
+b <- glm(choice ~ 0 + alt + commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000), data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O))
+c <- glm(choice ~ 0 + commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000), data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O))
+d <- glm(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000), data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O))
+
+e <- mlogit(choice ~ alt + commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Income_I:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit) | -1, data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
+f <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit | Income_I |  I(Relative_Change_Price/1000), data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
+
+g <- mlogit(choice ~ alt + commute + destinations + homes + parking + streets + transit | Income_I:I(Relative_Change_Price/1000) + 0 , data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
+
+
+
+
+
+e2 <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Income_I:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit) | -1, data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > U & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
+
+
+stargazer(a, b, d, d, e, f,
+          no.space = TRUE,
+          intercept.bottom = FALSE,
           type = "html",
           title = "Outlier Removed Models With Stated Value",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OverUnderNoOutmodels.htm")
-
-
-saveRDS(ResChoice_w_CensTract, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoice_w_CensTract.RDS")
-saveRDS(subset(ResChoiceData, ResChoiceData$rent_own == "1" & ResChoiceData$Stated_Price > 49), file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.RDS")
-
-
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/mlogitvsglm.htm")
 
 
 
