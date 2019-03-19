@@ -1,108 +1,100 @@
 ##### Finding Marginal Willingness to Pay ######
 
-
-
 # Renter Marginal Willingness to Pay
 
-RenterData  <-read_rds("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.RDS")
-
+RenterData  <- readRDS("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/RenterData.RDS")
+#RenterData <- subset(RenterData, RenterData$rent_own == "1")
+RenterData <- subset(RenterData, RenterData$rent_price > 49)
 # Check to see if variable classes are maintained
 sapply(RenterData, class)
 
-
+library(mlogit)
+library(support.CEs)
 # Renter Models with Demographics
 
-# Income 
+# Parsomonious 
 
-Renter_Income_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*Income_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_Income_I_robust <- sqrt(diag(vcovHC(Renter_Income_I, type = "HC0")))
-Renter_Income_I.pr2 <- round(1 - Renter_Income_I$deviance/Renter_Income_I$null.deviance, digits = 3)
+Renter_Par <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000), data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Renter_Par_MWTP <- mwtp(Renter_Par, monetary.variables = c("I(Relative_Change_Price/1000)"))
+
+# Income
+
+Renter_Income <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Income:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Income_MWTP <- mwtp(Renter_Income,
+                             monetary.variables = c("I(Relative_Change_Price/1000)", "I(Relative_Change_Price/1000):IncomeMid", "I(Relative_Change_Price/1000):IncomeHigh"),
+                             nonmonetary.variables = list(c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
+                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
+                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away")))
+
 
 # Education
 
-Renter_Education_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*Education_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_Education_I_robust <- sqrt(diag(vcovHC(Renter_Education_I, type = "HC0")))
-Renter_Education_I.pr2 <- round(1 - Renter_Education_I$deviance/Renter_Education_I$null.deviance, digits = 3)
+Renter_Education <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Education:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Education_I_MWTP <- mwtp(Renter_Education, monetary.variables = c("I(Relative_Change_Price/1000)"))
+
 
 # Employment
 
-Renter_employment_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*employment_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_employment_I_robust <- sqrt(diag(vcovHC(Renter_employment_I, type = "HC0")))
-Renter_employment_I.pr2 <- round(1 - Renter_employment_I$deviance/Renter_employment_I$null.deviance, digits = 3)
+Renter_Employment <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Employment:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 # Age
 
-Renter_age_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*age_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_age_I_robust <- sqrt(diag(vcovHC(Renter_age_I, type = "HC0")))
-Renter_age_I.pr2 <- round(1 - Renter_age_I$deviance/Renter_age_I$null.deviance, digits = 3)
+Renter_Age <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Age:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 # gender
 
-Renter_gender_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*gender_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_gender_I_robust <- sqrt(diag(vcovHC(Renter_gender_I, type = "HC0")))
-Renter_gender_I.pr2 <- round(1 - Renter_gender_I$deviance/Renter_gender_I$null.deviance, digits = 3)
+Renter_Gender <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Gender:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 # Home Region
 
-Renter_home_regionid_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*home_regionid_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_home_regionid_I_robust <- sqrt(diag(vcovHC(Renter_home_regionid_I, type = "HC0")))
-Renter_home_regionid_I.pr2 <- round(1 - Renter_home_regionid_I$deviance/Renter_home_regionid_I$null.deviance, digits = 3)
+Renter_Home_Region <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Home_Region:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 
 library(stargazer)
-stargazer(Renter_Income_I, Renter_Education_I, Renter_employment_I, Renter_age_I, Renter_gender_I, Renter_home_regionid_I,
-          se = list(Renter_Income_I_robust, Renter_Education_I_robust, Renter_employment_I_robust, Renter_age_I_robust, Renter_gender_I_robust, Renter_home_regionid_I_robust),
+stargazer(Renter_Par, Renter_Income, Renter_Education, Renter_Employment, Renter_Age, Renter_Gender, Renter_Home_Region,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("Puesdo R2", Renter_Income_I.pr2, Renter_Education_I.pr2, Renter_employment_I.pr2, Renter_age_I.pr2, Renter_gender_I.pr2, Renter_home_regionid_I.pr2)),
-          column.labels = c("Interactions with Income", "Interactions with Education", "Interactions with Employment", "Interactions with Age", "Interactions with Gender", "Interactions with Home Region"),
+          add.lines = list(c("AIC", AIC(Renter_Par), AIC(Renter_Income), AIC(Renter_Education), AIC(Renter_Employment), AIC(Renter_Age), AIC(Renter_Gender), AIC(Renter_Home_Region))),
           type = "html",
-          title = "Interacted With Demographic Renter Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/InterDemoRenters.htm")
+          title = "Interacted With Demographics Renter Models",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MWTPInterDemoRenters.htm")
 
 
 # Renter Models with Preferences
 
 # Plan to Move
 
-Renter_plan_move_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*plan_move_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_plan_move_I_robust <- sqrt(diag(vcovHC(Renter_plan_move_I, type = "HC0")))
-Renter_plan_move_I.pr2 <- round(1 - Renter_plan_move_I$deviance/Renter_plan_move_I$null.deviance, digits = 3)
+Renter_Plan_to_Move <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Plan_to_Move:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Current Place Type
 
-Renter_curr_place_type_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*curr_place_type_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_curr_place_type_I_robust <- sqrt(diag(vcovHC(Renter_curr_place_type_I, type = "HC0")))
-Renter_curr_place_type_I.pr2 <- round(1 - Renter_curr_place_type_I$deviance/Renter_curr_place_type_I$null.deviance, digits = 3)
+Renter_Curr_Place_Type <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Curr_Place_Type:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Current Residency type
 
-Renter_curr_res_type_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*curr_res_type_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_curr_res_type_I_robust <- sqrt(diag(vcovHC(Renter_curr_res_type_I, type = "HC0")))
-Renter_curr_res_type_I.pr2 <- round(1 - Renter_curr_res_type_I$deviance/Renter_curr_res_type_I$null.deviance, digits = 3)
+Renter_curr_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Curr_Res_Type:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Prefer Place type
 
-Renter_prefer_place_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*prefer_place_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_prefer_place_I_robust <- sqrt(diag(vcovHC(Renter_prefer_place_I, type = "HC0")))
-Renter_prefer_place_I.pr2 <- round(1 - Renter_prefer_place_I$deviance/Renter_prefer_place_I$null.deviance, digits = 3)
+Renter_prefer_place_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Prefer_Place:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Prefer Residency type
 
-Renter_prefer_res_type_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*prefer_res_type_I, data = RenterData, na.action = na.exclude, family = binomial)
-Renter_prefer_res_type_I_robust <- sqrt(diag(vcovHC(Renter_prefer_res_type_I, type = "HC0")))
-Renter_prefer_res_type_I.pr2 <- round(1 - Renter_prefer_res_type_I$deviance/Renter_prefer_res_type_I$null.deviance, digits = 3)
+Renter_prefer_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Prefer_Res_Type:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 
-stargazer(Renter_plan_move_I, Renter_curr_place_type_I, Renter_curr_res_type_I, Renter_prefer_place_I, Renter_prefer_res_type_I,
-          se = list(Renter_plan_move_I_robust, Renter_curr_place_type_I_robust, Renter_curr_res_type_I_robust, Renter_prefer_place_I_robust, Renter_prefer_res_type_I_robust),
+stargazer(Renter_Plan_to_Move, Renter_Curr_Place_Type, Renter_curr_res_type_I, Renter_prefer_place_I, Renter_prefer_res_type_I,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("Puesdo R2", Renter_plan_move_I.pr2, Renter_curr_place_type_I.pr2, Renter_curr_res_type_I.pr2, Renter_prefer_place_I.pr2, Renter_prefer_res_type_I.pr2)),
+          add.lines = list(c("AIC", AIC(Renter_Plan_to_Move), AIC(Renter_Curr_Place_Type), AIC(Renter_curr_res_type_I), AIC(Renter_prefer_place_I), AIC(Renter_prefer_res_type_I))),
           column.labels = c("Interactions with Plan to Move", "Interactions with Current Place Type", "Interactions with Current Residency Type", "Interactions with Preffered Place Type", "Interactions with Preffered Residency Type"),
           type = "html",
           title = "Interacted With Preference Renter Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/InterPrefRenters.htm")
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MWTPInterPrefRenters.htm")
 
 
 
@@ -113,106 +105,92 @@ stargazer(Renter_plan_move_I, Renter_curr_place_type_I, Renter_curr_res_type_I, 
 
       # Owner Marginal Willingness to Pay
 
-OwnerData  <-read_rds("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoice_w_CensTract.RDS")
+OwnerData  <-readRDS("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoice_w_CensTract.RDS")
 
-# Check to see if variable classes are maintained
-sapply(OwnerData, class)
+# Parsomonious 
 
+Owner_Par <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000), data = OwnerData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Owner_Par_MWTP <- mwtp(Owner_Par, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
-# Owner Models with Demographics
+# Income
 
-# Income 
+Owner_Income <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Income:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
+Owner_Income_MWTP <- mwtp(Owner_Income,
+                             monetary.variables = c("I(Relative_Change_Price/1000)", "I(Relative_Change_Price/1000):IncomeMid", "I(Relative_Change_Price/1000):IncomeHigh"),
+                             nonmonetary.variables = list(c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
+                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
+                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away")))
 
-Owner_Income_I <- glm(choice ~ alt + commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000)):Income_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_Income_I_robust <- sqrt(diag(vcovHC(Owner_Income_I, type = "HC0")))
-Owner_Income_I.pr2 <- round(1 - Owner_Income_I$deviance/Owner_Income_I$null.deviance, digits = 3)
 
 # Education
 
-Owner_Education_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*Education_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_Education_I_robust <- sqrt(diag(vcovHC(Owner_Education_I, type = "HC0")))
-Owner_Education_I.pr2 <- round(1 - Owner_Education_I$deviance/Owner_Education_I$null.deviance, digits = 3)
+Owner_Education <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Education:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
+Owner_Education_I_MWTP <- mwtp(Owner_Education, monetary.variables = c("I(Relative_Change_Price/1000)"))
+
 
 # Employment
 
-Owner_employment_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*employment_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_employment_I_robust <- sqrt(diag(vcovHC(Owner_employment_I, type = "HC0")))
-Owner_employment_I.pr2 <- round(1 - Owner_employment_I$deviance/Owner_employment_I$null.deviance, digits = 3)
+Owner_Employment <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Employment:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
+Owner_Income_MWTP <- mwtp(Owner_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 # Age
 
-Owner_age_I <- glm(choice ~ (alt + commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000)):age_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_age_I_robust <- sqrt(diag(vcovHC(Owner_age_I, type = "HC0")))
-Owner_age_I.pr2 <- round(1 - Owner_age_I$deviance/Owner_age_I$null.deviance, digits = 3)
+Owner_Age <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Age:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
+Owner_Income_MWTP <- mwtp(Owner_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 # gender
 
-Owner_gender_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*gender_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_gender_I_robust <- sqrt(diag(vcovHC(Owner_gender_I, type = "HC0")))
-Owner_gender_I.pr2 <- round(1 - Owner_gender_I$deviance/Owner_gender_I$null.deviance, digits = 3)
+Owner_Gender <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Gender:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
+Owner_Income_MWTP <- mwtp(Owner_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 # Home Region
 
-Owner_home_regionid_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*home_regionid_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_home_regionid_I_robust <- sqrt(diag(vcovHC(Owner_home_regionid_I, type = "HC0")))
-Owner_home_regionid_I.pr2 <- round(1 - Owner_home_regionid_I$deviance/Owner_home_regionid_I$null.deviance, digits = 3)
+Owner_Home_Region <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Home_Region:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
+Owner_Income_MWTP <- mwtp(Owner_Income, monetary.variables = c("I(Relative_Change_Price/1000)"))
 
 
 library(stargazer)
-stargazer(Owner_Income_I, Owner_Education_I, Owner_employment_I, Owner_age_I, Owner_gender_I, Owner_home_regionid_I,
-          se = list(Owner_Income_I_robust, Owner_Education_I_robust, Owner_employment_I_robust, Owner_age_I_robust, Owner_gender_I_robust, Owner_home_regionid_I_robust),
+stargazer(Owner_Par, Owner_Income, Owner_Education, Owner_Employment, Owner_Age, Owner_Gender, Owner_Home_Region,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("Puesdo R2", Owner_Income_I.pr2, Owner_Education_I.pr2, Owner_employment_I.pr2, Owner_age_I.pr2, Owner_gender_I.pr2, Owner_home_regionid_I.pr2)),
-          column.labels = c("Interactions with Income", "Interactions with Education", "Interactions with Employment", "Interactions with Age", "Interactions with Gender", "Interactions with Home Region"),
+          add.lines = list(c("AIC", AIC(Owner_Par), AIC(Owner_Income), AIC(Owner_Education), AIC(Owner_Employment), AIC(Owner_Age), AIC(Owner_Gender), AIC(Owner_Home_Region))),
           type = "html",
-          title = "Interacted With Demographic Owner Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/InterDemoOwners.htm")
+          title = "Interacted With Demographics Owner Models",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MWTPInterDemoOwners.htm")
 
 
 # Owner Models with Preferences
 
 # Plan to Move
 
-Owner_plan_move_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*plan_move_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_plan_move_I_robust <- sqrt(diag(vcovHC(Owner_plan_move_I, type = "HC0")))
-Owner_plan_move_I.pr2 <- round(1 - Owner_plan_move_I$deviance/Owner_plan_move_I$null.deviance, digits = 3)
+Owner_Plan_to_Move <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Plan_to_Move:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Current Place Type
 
-Owner_curr_place_type_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*curr_place_type_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_curr_place_type_I_robust <- sqrt(diag(vcovHC(Owner_curr_place_type_I, type = "HC0")))
-Owner_curr_place_type_I.pr2 <- round(1 - Owner_curr_place_type_I$deviance/Owner_curr_place_type_I$null.deviance, digits = 3)
+Owner_Curr_Place_Type <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Curr_Place_Type:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Current Residency type
 
-Owner_curr_res_type_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*curr_res_type_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_curr_res_type_I_robust <- sqrt(diag(vcovHC(Owner_curr_res_type_I, type = "HC0")))
-Owner_curr_res_type_I.pr2 <- round(1 - Owner_curr_res_type_I$deviance/Owner_curr_res_type_I$null.deviance, digits = 3)
+Owner_curr_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Curr_Res_Type:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Prefer Place type
 
-Owner_prefer_place_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*prefer_place_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_prefer_place_I_robust <- sqrt(diag(vcovHC(Owner_prefer_place_I, type = "HC0")))
-Owner_prefer_place_I.pr2 <- round(1 - Owner_prefer_place_I$deviance/Owner_prefer_place_I$null.deviance, digits = 3)
+Owner_prefer_place_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Prefer_Place:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Prefer Residency type
 
-Owner_prefer_res_type_I <- glm(choice ~ (commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000))*prefer_res_type_I, data = OwnerData, na.action = na.exclude, family = binomial)
-Owner_prefer_res_type_I_robust <- sqrt(diag(vcovHC(Owner_prefer_res_type_I, type = "HC0")))
-Owner_prefer_res_type_I.pr2 <- round(1 - Owner_prefer_res_type_I$deviance/Owner_prefer_res_type_I$null.deviance, digits = 3)
+Owner_Prefer_Res_Type <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + Prefer_Res_Type:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
 
-# Home value above census median
+# Under Valued
 
-Owner
+Owner_under_est <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + under_est:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
 
-stargazer(Owner_plan_move_I, Owner_curr_place_type_I, Owner_curr_res_type_I, Owner_prefer_place_I, Owner_prefer_res_type_I,
-          se = list(Owner_plan_move_I_robust, Owner_curr_place_type_I_robust, Owner_curr_res_type_I_robust, Owner_prefer_place_I_robust, Owner_prefer_res_type_I_robust),
+
+stargazer(Owner_Plan_to_Move, Owner_Curr_Place_Type, Owner_curr_res_type_I, Owner_prefer_place_I, Owner_Prefer_Res_Type,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("Puesdo R2", Owner_plan_move_I.pr2, Owner_curr_place_type_I.pr2, Owner_curr_res_type_I.pr2, Owner_prefer_place_I.pr2, Owner_prefer_res_type_I.pr2)),
+          add.lines = list(c("AIC", AIC(Owner_Plan_to_Move), AIC(Owner_Curr_Place_Type), AIC(Owner_curr_res_type_I), AIC(Owner_prefer_place_I), AIC(Owner_Prefer_Res_Type))),
           column.labels = c("Interactions with Plan to Move", "Interactions with Current Place Type", "Interactions with Current Residency Type", "Interactions with Preffered Place Type", "Interactions with Preffered Residency Type"),
           type = "html",
           title = "Interacted With Preference Owner Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/InterPrefOwners.htm")
-
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MWTPInterPrefOwners.htm")

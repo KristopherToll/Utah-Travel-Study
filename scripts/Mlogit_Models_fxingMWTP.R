@@ -18,23 +18,15 @@ library(sandwich)
 library(ResourceSelection)
 library(mlogit)
 
-Home_Tract_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = ResChoice_w_CensTract, na.action = na.omit, family = binomial)
-Home_Tract_Model_robust <- sqrt(diag(vcovHC(Home_Tract_Model, type = "HC0")))
-Home_Tract_Model.pr2 <- round(1 - Home_Tract_Model$deviance/Home_Tract_Model$null.deviance, digits = 3)
+Home_Tract_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = ResChoice_w_CensTract, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
 
-Home_Block_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = ResChoice_w_CensBlock, na.action = na.omit, family = binomial)
-Home_Block_Model_robust <- sqrt(diag(vcovHC(Home_Block_Model, type = "HC0")))
-Home_Block_Model.pr2 <- round(1 - Home_Block_Model$deviance/Home_Block_Model$null.deviance, digits = 3)
+Home_Block_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = ResChoice_w_CensBlock, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
 
 
-Home_Value_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = subset(ResChoiceData, na.action = na.omit, ResChoiceData$rent_own == "2"), family = binomial)
-Home_Value_Model_robust <- sqrt(diag(vcovHC(Home_Value_Model, type = "HC0")))
-Home_Value_Model.pr2 <- round(1 - Home_Value_Model$deviance/Home_Value_Model$null.deviance, digits = 3)
+Home_Value_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = subset(ResChoiceData, ResChoiceData$rent_own == "2"), shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
 
 
-Renter_Value_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = subset(ResChoiceData, ResChoiceData$rent_own == "1" & ResChoiceData$Stated_Price > 49), na.action = na.omit, family = binomial)
-Renter_Value_Model_robust <- sqrt(diag(vcovHC(Renter_Value_Model, type = "HC0")))
-Renter_Value_Model.pr2 <- round(1 - Renter_Value_Model$deviance/Renter_Value_Model$null.deviance, digits = 3)
+Renter_Value_Model <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = subset(ResChoiceData, ResChoiceData$rent_own == "1" & ResChoiceData$Stated_Price > 49), shape = "long", alt.var = "alt", id = "id", chid.var = "chid")
 
 
 library(stargazer)
