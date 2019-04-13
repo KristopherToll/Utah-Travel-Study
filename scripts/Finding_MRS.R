@@ -6,7 +6,7 @@ options(digits = 3)
 
 # Renter Marginal Willingness to Pay
 
-RenterData <- readRDS("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.RDS")
+RenterData <- readRDS("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OwnerData.RDS")
 RenterData <- subset(RenterData, RenterData$rent_own == "1")
 RenterData$PricePercent <- as.numeric(levels(RenterData$price))[RenterData$price]
 
@@ -111,7 +111,7 @@ stargazer(Renter_Plan_to_Move, Renter_Curr_Place_Type, Renter_Curr_Res_Type, Ren
 
 # Owner Marginal Willingness to Pay
 
-OwnerData  <-readRDS("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoice_w_CensTract.RDS")
+OwnerData  <-readRDS("C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OutlierRemovedData.RDS")
 OwnerData$PricePercent <- as.numeric(levels(OwnerData$price))[OwnerData$price]
 
 
@@ -119,6 +119,9 @@ OwnerData$PricePercent <- as.numeric(levels(OwnerData$price))[OwnerData$price]
 
 Owner_Par <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + PricePercent, data = OwnerData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
 Owner_Par_MWTP <- mwtp(Owner_Par, monetary.variables = c("PricePercent"))
+
+stargazer(Owner_Par_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MRSOwnerParPricePercent.htm")
+
 
 # Income
 
@@ -209,9 +212,14 @@ stargazer(Owner_Plan_to_Move, Owner_Curr_Place_Type, Owner_Curr_Res_Type, Owner_
 
 library(mosaic)
 
-# Renter Averages
+# Owner Averages
 
-RenterAverages <- aggregate(RenterData$Stated_Price, by = RenterData[,c(189:202)], FUN = mean)
+
+
+
+
+# GLM VS Mlogit
+
 
 a <- glm(choice ~ alt + commute + destinations + homes + parking + streets + transit , data = RenterData)
 b <- glm(choice ~ 0 + alt + commute + destinations + homes + parking + streets + transit, data = RenterData)

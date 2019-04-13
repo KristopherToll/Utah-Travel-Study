@@ -32,10 +32,13 @@ GeoID <- read_excel("C:/Users/A01246966/Box/Utah Travel Study/Utah Travel Study 
 
 # Household data
 library(plyr)
-library(dplyr)
 ResidentialChoice_PersonHouseholdData <- read_excel("C:/Users/A01246966/Box/Utah Travel Study/Utah Travel Study 2012/2. Data and Materials/7. Residential Choice Survey/1. Person Household Dataset/ResidentialChoice_PersonHouseholdData.xlsx")
+a <- subset(ResidentialChoice_PersonHouseholdData, ResidentialChoice_PersonHouseholdData$rent_price > 49)
+b  <- subset(ResidentialChoice_PersonHouseholdData, ResidentialChoice_PersonHouseholdData$home_price > 20000 & ResidentialChoice_PersonHouseholdData$home_price < 10000000)
 
-ResidentialChoice_PersonHouseholdData <- subset(ResidentialChoice_PersonHouseholdData, ResidentialChoice_PersonHouseholdData$curr_res_type != "6" & ResidentialChoice_PersonHouseholdData$curr_res_type != "7" & ResidentialChoice_PersonHouseholdData$curr_res_type != "8")
+ResidentialChoice_PersonHouseholdData <- rbind(a, b)
+
+#ResidentialChoice_PersonHouseholdData <- subset(ResidentialChoice_PersonHouseholdData, ResidentialChoice_PersonHouseholdData$curr_res_type != "6" & ResidentialChoice_PersonHouseholdData$curr_res_type != "7" & ResidentialChoice_PersonHouseholdData$curr_res_type != "8")
 
 
 # Convert Variable Types
@@ -67,19 +70,24 @@ ResidentialChoice_PersonHouseholdData$Home_Region <- as.character(revalue(as.fac
 ResidentialChoice_PersonHouseholdData$Home_Region <- factor(ResidentialChoice_PersonHouseholdData$Home_Region, levels = c("Cache", "WFRC_MAG", "Dixie", "Utah Other", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$Plan_to_Move <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$home_regionid), c("1" = "Yes", "2"= "No", "3" = "Unsure", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$Plan_to_Move <- factor(ResidentialChoice_PersonHouseholdData$Plan_to_Move, levels = c("Yes", "No", "NA"), exclude = "NA")
+ResidentialChoice_PersonHouseholdData$Plan_to_Move <- factor(ResidentialChoice_PersonHouseholdData$Plan_to_Move, levels = c("Yes", "No", "Unsure", "NA"), exclude = "NA")
 
-ResidentialChoice_PersonHouseholdData$Curr_Place_Type <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_place_type), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$Curr_Place_Type <- factor(ResidentialChoice_PersonHouseholdData$Curr_Place_Type, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"), exclude = "NA")
+ResidentialChoice_PersonHouseholdData$Curr_Place_Type <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_place_type), c("1" = "City downtown, res and/or comm mix", "2"= "City downtown, res and/or comm mix", "3" = "Suburban res and/or comm mix", "4" = "Suburban res and/or comm mix", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$Curr_Place_Type <- factor(ResidentialChoice_PersonHouseholdData$Curr_Place_Type, levels = c("City downtown, res and/or comm mix", "Suburban res and/or comm mix", "Small Town", "rural", "NA"), exclude = "NA")
 
-ResidentialChoice_PersonHouseholdData$Curr_Res_Type <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome/Multi Family 3 or less homes", "3" = "Townhome/Multi Family 3 or less homes", "4" = "Building", "5" = "Building", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$Curr_Res_Type <- factor(ResidentialChoice_PersonHouseholdData$Curr_Res_Type, levels = c("Single Family Detached Home", "Townhome/Multi Family 3 or less homes", "Building", "NA"), exclude = "NA")
+ResidentialChoice_PersonHouseholdData$Curr_Res_Type <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$curr_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome/Multi Family 3 or less homes", "3" = "Townhome/Multi Family 3 or less homes", "4" = "Building", "5" = "Building", "6" = "Mobile/Dorm/Other(boat/rv/van)", "7" = "Mobile/Dorm/Other(boat/rv/van)", "8" = "Mobile/Dorm/Other(boat/rv/van)",  "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$Curr_Res_Type <- factor(ResidentialChoice_PersonHouseholdData$Curr_Res_Type, levels = c("Single Family Detached Home", "Townhome/Multi Family 3 or less homes", "Building", "Mobile/Dorm/Other(boat/rv/van)", "NA"), exclude = "NA")
 
-ResidentialChoice_PersonHouseholdData$Prefer_Place <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_place), c("1" = "City downtown, res/comm mix", "2"= "City residential", "3" = "Suburban res/comm mix", "4" = "Suburban residential", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$Prefer_Place <- factor(ResidentialChoice_PersonHouseholdData$Prefer_Place, levels = c("City downtown, res/comm mix", "City residential", "Suburban res/comm mix", "Suburban residential", "Small Town", "rural", "NA"), exclude = "NA")
+ResidentialChoice_PersonHouseholdData$Prefer_Place <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_place), c("1" = "City downtown, res and/or comm mix", "2"= "City downtown, res and/or comm mix", "3" = "Suburban res and/or comm mix", "4" = "Suburban res and/or comm mix", "5" = "Small Town", "6" = "rural", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$Prefer_Place <- factor(ResidentialChoice_PersonHouseholdData$Prefer_Place, levels = c("City downtown, res and/or comm mix", "Suburban res and/or comm mix", "Small Town", "rural", "NA"), exclude = "NA")
 
-ResidentialChoice_PersonHouseholdData$Prefer_Res_Type <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome/Multi Family 3 or less homes", "3" = "Townhome/Multi Family 3 or less homes", "4" = "Building", "5" = "Building", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$Prefer_Res_Type <- factor(ResidentialChoice_PersonHouseholdData$Prefer_Res_Type, levels = c("Single Family Detached Home", "Townhome/Multi Family 3 or less homes", "Building", "NA"), exclude = "NA")
+ResidentialChoice_PersonHouseholdData$Prefer_Res_Type <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$prefer_res_type), c("1" = "Single Family Detached Home", "2" = "Townhome/Multi Family 3 or less homes", "3" = "Townhome/Multi Family 3 or less homes", "4" = "Building", "5" = "Building", "6" = "Mobile/Dorm/Other(boat/rv/van)", "7" = "Mobile/Dorm/Other(boat/rv/van)", "8" = "Mobile/Dorm/Other(boat/rv/van)",  "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$Prefer_Res_Type <- factor(ResidentialChoice_PersonHouseholdData$Prefer_Res_Type, levels = c("Single Family Detached Home", "Townhome/Multi Family 3 or less homes", "Building", "Mobile/Dorm/Other(boat/rv/van)", "NA"), exclude = "NA")
+
+# Remove rents with reported rent less that 49 and homeonwer with homevalues tless than 20,000 and more than 10,000,000
+
+library(psych)
+a <- describe(ResidentialChoice_PersonHouseholdData)
 
 
 # Choice Experiment Data
@@ -123,18 +131,18 @@ LogitData$price <- revalue(as.factor(LogitData$price), c("1" = "0.8", "2" = "0.9
 sapply(LogitData, class)
 
 # Join Logit data with demographics
-ResChoiceData <- join(LogitData, ResidentialChoice_PersonHouseholdData, type = "inner")
+ResChoiceData <- plyr::join(LogitData, ResidentialChoice_PersonHouseholdData, type = "inner")
 
 
 # Number one
 # ResChoice Data with Homeowners linked to Census Data
 
 # Joining on Census Tract
-CensTract_Estimate <- join(GeoID, ACS_12_5YR, type = "inner")
+CensTract_Estimate <- plyr::join(GeoID, ACS_12_5YR, type = "inner")
 CensTract_Estimate <- subset(CensTract_Estimate, CensTract_Estimate$`Estimate; Median value (dollars)` != "-")
 CensTract_Estimate$`Estimate; Median value (dollars)` <- as.numeric(CensTract_Estimate$`Estimate; Median value (dollars)`)
 
-ResChoice_w_CensTract <- join(ResChoiceData, CensTract_Estimate, type = "inner")
+ResChoice_w_CensTract <- plyr::join(ResChoiceData, CensTract_Estimate, type = "inner")
 ResChoice_w_CensTract <- subset(ResChoice_w_CensTract, ResChoice_w_CensTract$rent_own == "2")
 
 ResChoice_w_CensTract$Change_in_Price <- as.numeric(levels(ResChoice_w_CensTract$price))[ResChoice_w_CensTract$price]*as.numeric(ResChoice_w_CensTract$`Estimate; Median value (dollars)`)
@@ -152,12 +160,12 @@ saveRDS(ResChoice_w_CensTract, file = "C:/Users/A01246966/Box/Utah Travel Study/
 
 # Joining on Census Block
 
-CensBlock_Estimate <- join(GeoID, ACS_13_5YR, type = "inner")
+CensBlock_Estimate <- plyr::join(GeoID, ACS_13_5YR, type = "inner")
 CensBlock_Estimate <- subset(CensBlock_Estimate, CensBlock_Estimate$`Estimate; Median value (dollars)` != "1,000,000+"
                              & CensBlock_Estimate$`Estimate; Median value (dollars)` != "10,000-"
                              & CensBlock_Estimate$`Estimate; Median value (dollars)` != "-")
 
-ResChoice_w_CensBlock <- join(ResChoiceData, CensBlock_Estimate, type = "inner")
+ResChoice_w_CensBlock <- plyr::join(ResChoiceData, CensBlock_Estimate, type = "inner")
 ResChoice_w_CensBlock <- subset(ResChoice_w_CensBlock, ResChoice_w_CensBlock$rent_own == "2")
 
 ResChoice_w_CensBlock$Change_in_Price <- as.numeric(levels(ResChoice_w_CensBlock$price))[ResChoice_w_CensBlock$price]*as.numeric(ResChoice_w_CensBlock$`Estimate; Median value (dollars)`)
@@ -186,7 +194,11 @@ ResChoiceData$Relative_Change_Price <- ResChoiceData$Change_in_Price - ResChoice
 saveRDS(ResChoiceData, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.RDS")
 
 
-# Create Models
+
+
+
+
+# Create binary models for logistic regression
 
 
               #### Parsimonious Models #######
@@ -440,7 +452,7 @@ stargazer(Home_Value_Model_Over_No.Out, Home_Value_Model_Under_No.Out, Home_Valu
           out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OverUnderNoOutGLMmodels.htm")
 
 
-saveRDS(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$home_price > 20000), file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OutlierRemovedData.RDS")
+saveRDS(subset(ResChoiceData, ResChoice_w_CensTract$rent_own == "2"), file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/OwnerData.RDS")
 saveRDS(subset(ResChoiceData, ResChoiceData$rent_own == "1"), file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/RenterData.RDS")
 
 
