@@ -14,8 +14,16 @@ library(support.CEs)
 
 # Parsomonious 
 
-Renter_Par <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
-Renter_Par_MWTP <- mwtp(Renter_Par, monetary.variables = c("Relative_Change_Price"))
+Renter_Par_Price <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Renter_Par_MWTP <- mwtp(Renter_Par_Price, monetary.variables = c("Relative_Change_Price"))
+
+
+# Create Variable with Price Percent 
+
+RenterData$PricePercent <- as.numeric(levels(RenterData$price))[RenterData$price]
+
+Renter_Par_PricePercent <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + PricePercent, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Renter_Pec_MWTP <- mwtp(Renter_Par_PricePercent, monetary.variables = c("PricePercent"))
 
 # Income
 
@@ -55,16 +63,20 @@ Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("Relative_Chang
 
 
 library(stargazer)
-stargazer(Renter_Par, Renter_Income, Renter_Education, Renter_Employment, Renter_Age, Renter_Gender, Renter_Home_Region,
-          no.space = TRUE,
-          intercept.bottom = FALSE,
-          add.lines = list(c("AIC", AIC(Renter_Par), AIC(Renter_Income), AIC(Renter_Education), AIC(Renter_Employment), AIC(Renter_Age), AIC(Renter_Gender), AIC(Renter_Home_Region))),
-          column.labels = c("Parsimonious Model", "Interactions with Income", "Interactions with Education", "Interactions with Employment", "Interactions with Age", "Interactions with Gender", "Interaction with Region"),
-          type = "html",
-          title = "Interacted With Demographics Renter Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MWTPInterDemoRenters.htm")
 
 stargazer(Renter_Par_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MWTPRenterPar.htm")
+stargazer(Renter_Pec_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MRSRenterPar.htm")
+
+
+stargazer(Renter_Par_Price, Renter_Par_PricePercent, Renter_Income, Renter_Gender,
+          no.space = TRUE,
+          intercept.bottom = FALSE,
+          add.lines = list(c("AIC", round(AIC(Renter_Par_Price), 0), round(AIC(Renter_Par_PricePercent), 0), round(AIC(Renter_Income), 0), round(AIC(Renter_Gender), 0))),
+          column.labels = c("Parsimonious Model with Relative Change in Price", "Parsimonious Model with Percant Change", "Interactions with Income", "Interactions with Gender"),
+          type = "html",
+          title = "Renter Models",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/sec_dRenterModels.htm")
+
 
 # Renter Models with Preferences
 
@@ -89,15 +101,14 @@ Renter_prefer_place_I <- mlogit(choice ~ commute + destinations + homes + parkin
 Renter_prefer_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Prefer_Res_Type:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 
-stargazer(Renter_Plan_to_Move, Renter_Curr_Place_Type, Renter_curr_res_type_I, Renter_prefer_place_I, Renter_prefer_res_type_I,
+stargazer(Renter_Par_Price, Renter_Employment, Renter_Education, Renter_Home_Region, Renter_Plan_to_Move, Renter_curr_res_type_I, Renter_Curr_Place_Type,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("AIC", AIC(Renter_Plan_to_Move), AIC(Renter_Curr_Place_Type), AIC(Renter_curr_res_type_I), AIC(Renter_prefer_place_I), AIC(Renter_prefer_res_type_I))),
-          column.labels = c("Interactions with Plan to Move", "Interactions with Current Place Type", "Interactions with Current Residency Type", "Interactions with Preffered Place Type", "Interactions with Preffered Residency Type"),
+          add.lines = list(c("AIC", round(AIC(Renter_Par_Price), 0), round(AIC(Renter_Employment), 0), round(AIC(Renter_Education), 0), round(AIC(Renter_Home_Region), 0), round(AIC(Renter_Plan_to_Move), 0), round(AIC(Renter_curr_res_type_I), 0),round(AIC(Renter_Curr_Place_Type), 0 ))),
+          column.labels = c("Parasimonious Model", "Interactions with Employment", "Interactions with Education", "Interactions with Home Region", "Interactions with Plan to Move", "Interations with Current Residency Type", "Interactions with Current Neighborhood Type"),
           type = "html",
           title = "Interacted With Preference Renter Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MWTPInterPrefRenters.htm")
-
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/InterPrefRenters.htm")
 
 
 
@@ -188,7 +199,7 @@ Owner_Prefer_Res_Type <- mlogit(choice ~ commute + destinations + homes + parkin
 
 # Under Valued
 
-Owner_under_est <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + under_est:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
+#Owner_under_est <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + I(Relative_Change_Price/1000) + under_est:(I(Relative_Change_Price/1000) + commute + destinations + homes + parking + streets + transit), data = OwnerData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 
 stargazer(Owner_Plan_to_Move, Owner_Curr_Place_Type, Owner_curr_res_type_I, Owner_prefer_place_I, Owner_Prefer_Res_Type,

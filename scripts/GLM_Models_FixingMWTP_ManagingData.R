@@ -57,8 +57,8 @@ ResidentialChoice_PersonHouseholdData$Income <- factor(ResidentialChoice_PersonH
 ResidentialChoice_PersonHouseholdData$Education <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$education), c("1" = "High School or less", "2" = "High School or less", "3" = "Some College or Voc/tech Training", "4" = "Some College or Voc/tech Training", "5" = "Associates", "6" = "Bachelors", "7" = "Graduate/Post Doc", "NA" = "NA")))
 ResidentialChoice_PersonHouseholdData$Education <- factor(ResidentialChoice_PersonHouseholdData$Education, levels = c("High School or less", "Some College or Voc/tech Training", "Associates", "Bachelors", "Graduate/Post Doc", "NA"), exclude = "NA")
 
-ResidentialChoice_PersonHouseholdData$Employment <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$employment), c("1" = "Self or full-time employment", "2"= "part-time", "3" = "Self or full-time employment", "4" = "student", "5"= "student", "6" = "Homemaker", "7" = "Retired", "8" = "Not Currently Employed", "NA" = "NA")))
-ResidentialChoice_PersonHouseholdData$Employment <- factor(ResidentialChoice_PersonHouseholdData$Employment, levels = c("Self or full-time employment", "student", "Homemaker", "Retired", "Not Currently Employed", "NA"), exclude = "NA")
+ResidentialChoice_PersonHouseholdData$Employment <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$employment), c("1" = "Self, part, or full-time employment", "2"= "Self, part, or full-time employment", "3" = "Self, part, or full-time employment", "4" = "student", "5"= "student", "6" = "Homemaker", "7" = "Retired", "8" = "Not Currently Employed", "NA" = "NA")))
+ResidentialChoice_PersonHouseholdData$Employment <- factor(ResidentialChoice_PersonHouseholdData$Employment, levels = c("Self, part, or full-time employment", "student", "Homemaker", "Retired", "Not Currently Employed", "NA"), exclude = "NA")
 
 ResidentialChoice_PersonHouseholdData$Age <- as.character(revalue(as.factor(ResidentialChoice_PersonHouseholdData$age), c("4" = "age 18-34", "5"= "age 18-34", "6" = "age 35-54", "7" = "age 35-54", "8"= "age 55 or older", "9" = "age 55 or older", "10" = "age 55 or older", "11" = "age 55 or older", "NA" = "NA")))
 ResidentialChoice_PersonHouseholdData$Age <- factor(ResidentialChoice_PersonHouseholdData$Age, levels = c("age 18-34", "age 35-54", "age 55 or older", "NA"), exclude = "NA")
@@ -388,6 +388,8 @@ ggplot( data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_Hom
 Over_Ratio_mean <- mean(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 1)$Ratio_BTW_HomeV_Estimate)
 Over_Ratio_sd <- sd(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 1)$Ratio_BTW_HomeV_Estimate)
 O <- Over_Ratio_mean + 3 * Over_Ratio_sd
+
+x <- describe(subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 1)$Ratio_BTW_HomeV_Estimate)
 
 ggplot( data = subset(ResChoice_w_CensTract, ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate > 
                         1 & ResChoice_w_CensTract$Ratio_BTW_HomeV_Estimate < O), aes(x = Ratio_BTW_HomeV_Estimate)) + geom_histogram(binwidth = 2.3) + labs(title = "") 
