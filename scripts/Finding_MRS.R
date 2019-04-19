@@ -117,10 +117,19 @@ OwnerData$PricePercent <- as.numeric(levels(OwnerData$price))[OwnerData$price]
 
 # Parsomonious 
 
-Owner_Par <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + PricePercent, data = OwnerData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
-Owner_Par_MWTP <- mwtp(Owner_Par, monetary.variables = c("PricePercent"))
+Owner_Par_Price <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = OwnerData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Owner_Par_MWTP <- mwtp(Owner_Par_Price, monetary.variables = c("Relative_Change_Price"))
 
-stargazer(Owner_Par_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MRSOwnerParPricePercent.htm")
+stargazer(Owner_Par_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MRSOwnerParPrice.htm")
+
+
+
+Owner_Par_PricePercent <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + PricePercent, data = OwnerData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Owner_Par_PricePercent_MWTP <- mwtp(Owner_Par_PricePercent, monetary.variables = c("PricePercent"))
+
+stargazer(Owner_Par_PricePercent_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MRSOwnerParPricePercent.htm")
+
+
 
 
 # Income
@@ -161,15 +170,24 @@ Owner_Income_MWTP <- mwtp(Owner_Income, monetary.variables = c("PricePercent"))
 
 
 library(stargazer)
-stargazer(Owner_Par, Owner_Income, Owner_Education, Owner_Employment, Owner_Age, Owner_Gender, Owner_Home_Region,
+stargazer(Owner_Education, Owner_Employment, Owner_Home_Region, Owner_Plan_to_Move, Owner_Curr_Res_Type, Owner_Curr_Place_Type,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("AIC", round(AIC(Owner_Par), 3), round(AIC(Owner_Income), 3), round(AIC(Owner_Education), 3), round(AIC(Owner_Employment), 3), round(AIC(Owner_Age), 3), round(AIC(Owner_Gender), 3), round(AIC(Owner_Home_Region), 3))),
-          column.labels = c("Parsomonious", "Interactions with Income", "Interactions with Education", "Interactions with Employment", "Interactions with Age", "Interactions with Gender", "Interactions with Home Region ID"),
+          add.lines = list(c("AIC", round(AIC(Owner_Education), 3), round(AIC(Owner_Employment), 3), round(AIC(Owner_Home_Region), 3), round(AIC(Owner_Plan_to_Move), 3), round(AIC(Owner_Curr_Res_Type), 3)), round(AIC(Owner_Curr_Place_Type), 3)),
+          column.labels = c("Parsomonious", "Interactions with Education", "Interactions with Employment", "Interactions with Age", "Interactions with Home Region", "Interactions with Plan to Move", "Interactions with Current Residence Type", "Interactions with Current Place Type"),
           type = "html",
           title = "Interacted With Demographics Owner Models",
           out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ThesisResultsInterDemoOwners.htm")
 
+
+stargazer(Owner_Par_Price, Owner_Par_PricePercent, Owner_Income, Owner_Gender,
+          no.space = TRUE,
+          intercept.bottom = FALSE,
+          add.lines = list(c("AIC", round(AIC(Owner_Par_Price), 0), round(AIC(Owner_Par_PricePercent), 0), round(AIC(Owner_Income), 0), round(AIC(Owner_Gender), 0))),
+          column.labels = c("Parsimonious Model with Relative Change in Price", "Parsimonious Model with Percant Change", "Interactions with Income", "Interactions with Gender"),
+          type = "html",
+          title = "Owner Models",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/sec_dOwnerModels.htm")
 
 # Owner Models with Preferences
 
@@ -208,13 +226,27 @@ stargazer(Owner_Plan_to_Move, Owner_Curr_Place_Type, Owner_Curr_Res_Type, Owner_
           out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ThesisResultsInterPrefOwners.htm")
 
 
-# Finding Averages
+# Method one Results
 
-library(mosaic)
+Owner_Par_Price <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = OwnerData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Renter_Par_Price <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
 
-# Owner Averages
+stargazer(Owner_Par_Price, Renter_Par_Price,
+          no.space = TRUE,
+          intercept.bottom = FALSE,
+          add.lines = list(c("AIC", round(AIC(Owner_Par_Price), 0), round(AIC(Renter_Par_Price), 0))),
+          column.labels = c("Owner Model", "Renter Model"),
+          type = "html",
+          title = "Owner and Renter Models That Used Method One for price",
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/Method_One_Owner_Renter_Model")
 
 
+
+Owner_Par_MWTP <- mwtp(Owner_Par_Price, monetary.variables = c("Relative_Change_Price"))
+Renter_Par_MWTP <- mwtp(Renter_Par_Price, monetary.variables = c("Relative_Change_Price"))
+
+stargazer(Owner_Par_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/Method_One_MWTP_Owner.htm")
+stargazer(Renter_Par_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/Method_One_MWTP_Renter.htm")
 
 
 

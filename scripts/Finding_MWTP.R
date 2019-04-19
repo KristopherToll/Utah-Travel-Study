@@ -14,52 +14,50 @@ library(support.CEs)
 
 # Parsomonious 
 
-Renter_Par_Price <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+RenterData$NumericChange <- as.numeric(levels(RenterData$price))[RenterData$price]
+
+
+Renter_Par_Price <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
 Renter_Par_MWTP <- mwtp(Renter_Par_Price, monetary.variables = c("Relative_Change_Price"))
 
 
 # Create Variable with Price Percent 
 
-RenterData$PricePercent <- as.numeric(levels(RenterData$price))[RenterData$price]
 
-Renter_Par_PricePercent <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + PricePercent, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
-Renter_Pec_MWTP <- mwtp(Renter_Par_PricePercent, monetary.variables = c("PricePercent"))
+Renter_Par_PricePercent <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange, data = RenterData, shape = "long", alt.var = "alt", id = "password", chid.var = "chid")
+Renter_Pec_MWTP <- mwtp(Renter_Par_PricePercent, monetary.variables = c("NumericChange"))
 
 # Income
 
-Renter_Income <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Income:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
-Renter_Income_MWTP <- mwtp(Renter_Income,
-                             monetary.variables = c("Relative_Change_Price", "Relative_Change_Price:IncomeMid", "Relative_Change_Price:IncomeHigh"),
-                             nonmonetary.variables = list(c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
-                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
-                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away")))
+Renter_Income <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Income:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+#Renter_Income_MWTP <- mwtp(Renter_Income,
+#                             monetary.variables = c("Relative_Change_Price", "Relative_Change_Price:IncomeMid", "Relative_Change_Price:IncomeHigh"),
+#                             nonmonetary.variables = list(c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
+#                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away"),
+#                                                          c("commute5 Miles", "commute10 miles", "commute20 Miles", "destinationsLess than 3 Miles", "destinationsLess than 10 Miles","destinations10 Miles or more", "homesMix, Single Fam 1/2 acre lots, townhomes, apartments, condos", "homesOnly single fam 1/2 acre lots", "homesSingle Fam 1+ acre Lots", "parkingOn-street or free parking", "parkingOff-street or Paid Parking", "streetsFor Cars, Pedestrians, and cyclers", "transitBus stop within walking distance and Rail 5 miles away", "transitRail and bus 5 miles away", "transitRail and Bus 10 miles Away")))
 
 
 # Education
 
-Renter_Education <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Education:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Education <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Education:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 Renter_Education_I_MWTP <- mwtp(Renter_Education, monetary.variables = c("Relative_Change_Price"))
 
 
 # Employment
 
-Renter_Employment <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Employment:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
-Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("Relative_Change_Price"))
+Renter_Employment <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Employment:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Age
 
-Renter_Age <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Age:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
-Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("Relative_Change_Price"))
+Renter_Age <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Age:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # gender
 
-Renter_Gender <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Gender:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
-Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("Relative_Change_Price"))
+Renter_Gender <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Gender:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Home Region
 
-Renter_Home_Region <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Home_Region:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
-Renter_Income_MWTP <- mwtp(Renter_Income, monetary.variables = c("Relative_Change_Price"))
+Renter_Home_Region <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Home_Region:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 
 library(stargazer)
@@ -68,43 +66,43 @@ stargazer(Renter_Par_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/B
 stargazer(Renter_Pec_MWTP$mwtp.table, type = "html", out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/MRSRenterPar.htm")
 
 
-stargazer(Renter_Par_Price, Renter_Par_PricePercent, Renter_Income, Renter_Gender,
+stargazer(Renter_Par_PricePercent, Renter_Income, Renter_Gender,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("AIC", round(AIC(Renter_Par_Price), 0), round(AIC(Renter_Par_PricePercent), 0), round(AIC(Renter_Income), 0), round(AIC(Renter_Gender), 0))),
+          add.lines = list(c("AIC", round(AIC(Renter_Par_PricePercent), 0), round(AIC(Renter_Income), 0), round(AIC(Renter_Gender), 0))),
           column.labels = c("Parsimonious Model with Relative Change in Price", "Parsimonious Model with Percant Change", "Interactions with Income", "Interactions with Gender"),
           type = "html",
           title = "Renter Models",
-          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/sec_dRenterModels.htm")
+          out = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/thrd_RenterModels.htm")
 
 
 # Renter Models with Preferences
 
 # Plan to Move
 
-Renter_Plan_to_Move <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Plan_to_Move:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Plan_to_Move <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Plan_to_Move:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Current Place Type
 
-Renter_Curr_Place_Type <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Curr_Place_Type:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_Curr_Place_Type <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Curr_Place_Type:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Current Residency type
 
-Renter_curr_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Curr_Res_Type:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_curr_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Curr_Res_Type:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Prefer Place type
 
-Renter_prefer_place_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Prefer_Place:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_prefer_place_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Prefer_Place:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 # Prefer Residency type
 
-Renter_prefer_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + Relative_Change_Price + Prefer_Res_Type:(Relative_Change_Price + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
+Renter_prefer_res_type_I <- mlogit(choice ~ commute + destinations + homes + parking + streets + transit + NumericChange + Prefer_Res_Type:(NumericChange + commute + destinations + homes + parking + streets + transit), data = RenterData, shape = "long", alt.var = "alt", chid.var = "chid")
 
 
-stargazer(Renter_Par_Price, Renter_Employment, Renter_Education, Renter_Home_Region, Renter_Plan_to_Move, Renter_curr_res_type_I, Renter_Curr_Place_Type,
+stargazer(Renter_Employment, Renter_Education, Renter_Home_Region, Renter_Plan_to_Move, Renter_curr_res_type_I, Renter_Curr_Place_Type,
           no.space = TRUE,
           intercept.bottom = FALSE,
-          add.lines = list(c("AIC", round(AIC(Renter_Par_Price), 0), round(AIC(Renter_Employment), 0), round(AIC(Renter_Education), 0), round(AIC(Renter_Home_Region), 0), round(AIC(Renter_Plan_to_Move), 0), round(AIC(Renter_curr_res_type_I), 0),round(AIC(Renter_Curr_Place_Type), 0 ))),
+          add.lines = list(c("AIC", round(AIC(Renter_Employment), 0), round(AIC(Renter_Education), 0), round(AIC(Renter_Home_Region), 0), round(AIC(Renter_Plan_to_Move), 0), round(AIC(Renter_curr_res_type_I), 0),round(AIC(Renter_Curr_Place_Type), 0 ))),
           column.labels = c("Parasimonious Model", "Interactions with Employment", "Interactions with Education", "Interactions with Home Region", "Interactions with Plan to Move", "Interations with Current Residency Type", "Interactions with Current Neighborhood Type"),
           type = "html",
           title = "Interacted With Preference Renter Models",
