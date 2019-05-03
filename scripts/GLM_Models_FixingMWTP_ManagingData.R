@@ -192,7 +192,7 @@ ResChoiceData$Change_in_Price <- as.numeric(ResChoiceData$Stated_Price) * as.num
 ResChoiceData$Relative_Change_Price <- ResChoiceData$Change_in_Price - ResChoiceData$Stated_Price
 
 saveRDS(ResChoiceData, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.RDS")
-
+write.csv(ResChoiceData, file = "C:/Users/A01246966/Box/Utah Travel Study/Thesis_Work/ResChoiceData.csv")
 
 
 
